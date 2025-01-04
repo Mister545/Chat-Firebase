@@ -17,9 +17,7 @@ import com.example.chatfirebase.databinding.ItemChatBinding
 
 class ViewAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<ViewAdapter.ScrollHolder>(){
 
-    val firebaseService = FirebaseService()
     var meName = ""
-
 
     private var listMassages = mutableListOf<ModelUserRv>()
     interface OnItemClickListener {
@@ -64,12 +62,6 @@ class ViewAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<View
 
     override fun onBindViewHolder(holder: ViewAdapter.ScrollHolder, position: Int) {
         holder.bind(listMassages[position])
-//        if (position == adapter.itemCount - 1) {
-//            val isAtBottom = !recyclerView.canScrollVertically(1)
-//            if (isAtBottom) {
-//                recyclerView.scrollToPosition(adapter.itemCount - 1)
-//            }
-//        }
     }
 
     override fun getItemCount(): Int {

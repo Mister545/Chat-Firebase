@@ -13,6 +13,14 @@
         android:theme="@style/Theme.ChatFirebase"
         tools:targetApi="31">
         <activity
+            android:name=".ScrollActivity2"
+            android:exported="false"
+            android:label="@string/title_activity_scroll2"
+            android:theme="@style/Theme.ChatFirebase.NoActionBar" />
+        <activity
+            android:name=".ui.editProfile.EditProfile"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
@@ -21,11 +29,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SignInAct">
-        </activity>
+        <activity android:name=".SignInAct" />
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.profile.ProfileFragment"
             android:exported="false" />
         <activity
             android:name=".ScrollActivity"
@@ -36,8 +45,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>

@@ -1,0 +1,14 @@
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/baseline_edit_24"
+        android:title="Редагувати"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/baseline_more_vert_24"
+        android:title="Налаштування"
+        app:showAsAction="ifRoom" />
+</menu>

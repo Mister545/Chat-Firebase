@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">ChatFirebase</string>
     <string name="toolbar_name">%1$s |</string>
+    <string name="back_button_desc">Назад</string>
+    <string name="edit_button_desc">Редагувати</string>
+    <string name="settings_button_desc">Налаштування</string>
 
+    <string name="version_app">V0.1</string>
+    <string name="title_activity_scroll2">ScrollActivity2</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_profile">Profile</string>
+    <string name="menu_new_groups">Groups</string>
+    <string name="menu_saved">Saved</string>
+    <string name="menu_setting">Setting</string>
 </resources>

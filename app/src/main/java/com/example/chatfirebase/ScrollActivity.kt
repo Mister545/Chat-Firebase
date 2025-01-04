@@ -7,10 +7,13 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -41,6 +44,9 @@ class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
         setContentView(binding.root)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
 
+        val intent = Intent(this, ScrollActivity2::class.java)
+        startActivity(intent)
+
         authNull = FirebaseAuth.getInstance()
         if (FirebaseAuth.getInstance().currentUser == null){
             val intent = Intent(this, SignInAct::class.java)
@@ -51,8 +57,8 @@ class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
                 binding.include.toolbarName.text = getString(R.string.toolbar_name, it.name)
             }
 
-            binding.include.customToolbar.visibility = View.VISIBLE
-            binding.toolbar.visibility = View.VISIBLE
+//            binding.include.customToolbar.visibility = View.VISIBLE
+//            binding.toolbar.visibility = View.VISIBLE
             binding.fragmentContainer.visibility = View.GONE
             binding.animEmpty.visibility =View.GONE
             binding.animLoading.visibility = View.VISIBLE
@@ -64,8 +70,8 @@ class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
                 if (btAddClose){
 //                    binding.fBAddNewChat.visibility = View.V
                     binding.rcView.visibility = View.GONE
-                    binding.include.customToolbar.visibility = View.GONE
-                    binding.toolbar.visibility = View.GONE
+//                    binding.include.customToolbar.visibility = View.GONE
+//                    binding.toolbar.visibility = View.GONE
                     binding.animEmpty.visibility = View.GONE
                     binding.fBAddNewChat.setImageResource(R.drawable.ic_arrow_back_24)
                     val itemFragment = ItemFragment().apply {

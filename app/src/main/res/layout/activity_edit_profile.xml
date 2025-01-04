@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ConstraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/p_ed_background"
+    tools:context=".ui.editProfile.EditProfile">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:background="@color/p_ed_toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@color/p_ed_layout_background"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:paddingStart="10dp">
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/p_ed_layout_background"
+                android:text="Your name"
+                android:textColor="@color/p_ed_blue_text"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/editTextText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Name"
+                android:inputType="text"
+                android:maxLength="10"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/p_ed_background"
+                android:textColorHint="@color/p_ed_gray_text"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/editTextText3"
+                android:layout_marginStart="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/p_ed_layout_background"
+                android:ems="10"
+                android:hint="Second Name"
+                android:inputType="text"
+                android:maxLength="10"
+                android:textColor="@color/white"
+                android:textColorHint="@color/p_ed_gray_text"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/p_ed_layout_background"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:paddingStart="10dp">
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/p_ed_layout_background"
+                    android:text="About you"
+                    android:textColor="@color/p_ed_blue_text"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/editTextText4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/p_ed_layout_background"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Type something about you...                                 70"
+                    android:inputType="text"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/p_ed_gray_text"
+                    android:textSize="20sp" />
+
+
+                    <TextView
+                        android:id="@+id/textView20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|end"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginEnd="3dp"
+                        android:background="@color/p_ed_layout_background"
+                        android:gravity="end"
+                        android:text="70"
+                        android:textColor="@color/p_ed_blue_text"
+                        android:textSize="18sp" />
+                </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/p_ed_layout_background"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:paddingStart="10dp">
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/p_ed_layout_background"
+                android:text="Date of birth"
+                android:textColor="@color/p_ed_blue_text"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/editTextText5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:backgroundTint="@color/p_ed_background"
+                    android:text="Date of birth"
+                    android:clickable="false"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/tDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="31 Oct. 2005"
+                        android:textColor="@color/p_blue_text"
+                        android:textSize="18sp"
+                        tools:ignore="InvalidId" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+            <TextView
+                android:id="@+id/textView19"
+                android:padding="8dp"
+                android:layout_marginTop="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete date of birth"
+                android:background="@color/p_ed_layout_background"
+                android:textColor="@color/p_ed_red_text"
+                android:textSize="20sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/dimmerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:alpha="0"
+        android:visibility="gone" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:visibility="gone">
+
+        <include layout="@layout/item_bottom_sheet_edit_profile" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
