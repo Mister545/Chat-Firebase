@@ -5,13 +5,17 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/chat_24px"
+            android:title="@string/menu_chat" />
+        <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/account_circle_24px"
             android:title="@string/menu_profile" />
         <item
             android:id="@+id/nav_new_group"
             android:icon="@drawable/group_24px"
-            android:title="@string/menu_groups" />
+            android:title="@string/menu_new_groups" />
         <item
             android:id="@+id/nav_saved"
             android:icon="@drawable/bookmark_24px"

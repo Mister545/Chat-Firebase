@@ -26,21 +26,12 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Налаштування Toolbar
-        val toolbar: Toolbar = binding.toolbar123
-        toolbar.title = "Data profile"
-
         // Додавання меню
         setHasOptionsMenu(true)
 
         // Зміна кольору статус-бару
         activity?.window?.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.p_toolbar_nickname)
-
-        // Обробка кнопки "Назад"
-        toolbar.setNavigationOnClickListener {
-            activity?.onBackPressedDispatcher?.onBackPressed()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

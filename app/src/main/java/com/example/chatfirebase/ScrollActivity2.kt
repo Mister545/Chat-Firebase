@@ -13,6 +13,24 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.chatfirebase.databinding.ActivityScroll2Binding
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.chatfirebase.RcView.ItemFragment
+import com.example.chatfirebase.RcView.ModelUserRv
+import com.example.chatfirebase.RcView.ViewAdapter
+import com.example.chatfirebase.databinding.ContentScroll2Binding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 
 class ScrollActivity2 : AppCompatActivity() {
 
@@ -35,14 +53,14 @@ class ScrollActivity2 : AppCompatActivity() {
                 .setAction("Action", null)
                 .setAnchorView(R.id.fab).show()
         }
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_scroll2)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_profile, R.id.nav_new_group, R.id.nav_saved, R.id.nav_settings
+                R.id.nav_profile, R.id.nav_new_group, R.id.nav_saved, R.id.nav_settings, R.id.nav_chat
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -59,4 +77,6 @@ class ScrollActivity2 : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_scroll2)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+
 }

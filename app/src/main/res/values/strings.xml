@@ -14,6 +14,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="menu_chat">Chats</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_new_groups">Groups</string>
     <string name="menu_saved">Saved</string>
