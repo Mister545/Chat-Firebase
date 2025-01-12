@@ -133,7 +133,7 @@ class FirebaseService {
 
     fun getUser(userUid: String, callback: (UserModel) -> Unit){
         val databaseReference = database.getReference("users/${userUid}")
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.getValue(UserModel::class.java) == null){
                     println()

@@ -8,18 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatfirebase.R
 import com.example.chatfirebase.RcMassage
-import com.example.chatfirebase.RcView.ChatAdapter
 import com.example.chatfirebase.databinding.FragmentChatBinding
-import com.example.chatfirebase.databinding.FragmentChatsBinding
 
 class Chat : Fragment() {
 
@@ -48,23 +43,28 @@ class Chat : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val chatId = arguments?.getString("clickedItem") // Отримуємо значення
+        val clickedUser = arguments?.getString("clickedUser") // Отримуємо значення
 
         Log.d("ooo", "argument in chat $chatId")
-        chatId?.let { viewModel.getMassages(it) }
-
-        chatId?.let { viewModel.start(it) }
+        viewModel.start(chatId = chatId, clickedUser = clickedUser)
 
         viewModel.partner.observe(requireActivity()){
             Log.d("ooo", "pertner $it")
             val toolbarImage = requireActivity().findViewById<ImageView>(R.id.iconUser)
             val toolbarName = requireActivity().findViewById<TextView>(R.id.toolbarTitle)
-            toolbarName.text = it.name
-            Glide.with(requireContext())
-                .load(it.image)
-                .apply(RequestOptions.circleCropTransform())
-                .into(toolbarImage)
-
-
+            if (it.image.isEmpty()){
+                toolbarName.text = it.name
+                Glide.with(requireContext())
+                    .load(R.drawable.user_default)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(toolbarImage)
+            } else {
+                toolbarName.text = it.name
+                Glide.with(requireContext())
+                    .load(it.image)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(toolbarImage)
+            }
         }
         viewModel.listChat.observe(requireActivity()){
             Log.d("ooo", "null? list ${it}")
@@ -77,8 +77,7 @@ class Chat : Fragment() {
         binding.bSend.setOnClickListener {
             val massage = binding.editTextText.text.toString()
             binding.editTextText.text.clear()
-            viewModel.sentMassage(massage, chatId!!)
+            viewModel.sentMassage(massage, chatId, clickedUser)
         }
-
     }
 }

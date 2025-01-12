@@ -8,6 +8,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.chatfirebase.ui.editProfile.EditProfile
 import com.example.chatfirebase.R
 import com.example.chatfirebase.databinding.FragmentProfileBinding
@@ -29,7 +31,7 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        return binding.root
+        return _binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,11 +43,31 @@ class ProfileFragment : Fragment() {
         // Зміна кольору статус-бару
         activity?.window?.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.p_toolbar_nickname)
+
+        viewModel.init()
+
+        viewModel.user.observe(viewLifecycleOwner) {
+            _binding?.let { binding ->
+                binding.nameT.text = it.name
+                binding.email.text = it.email
+                binding.intoduseUser.text = "my name is ${it.name}"
+                if (it.image.isNotEmpty()) {
+                    Glide.with(requireContext())
+                        .load(it.image)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(binding.imUserProfile)
+                } else {
+                    binding.imUserProfile.setImageResource(R.drawable.user_default)
+                }
+            }
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_menu_profile, menu)
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

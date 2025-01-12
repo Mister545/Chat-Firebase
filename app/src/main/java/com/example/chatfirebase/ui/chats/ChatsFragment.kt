@@ -51,7 +51,7 @@ class ChatsFragment : Fragment(), ChatAdapter.OnItemClickListener {
         viewModel.chatsInit()
 
         viewModel.listChats.observe(requireActivity()) {
-            adapterChat.setListChats(it, viewModel.uid)
+            adapterChat.setListChats(it, viewModel.me.value!!.name)
         }
 
         binding.rcView.layoutManager = LinearLayoutManager(requireContext())

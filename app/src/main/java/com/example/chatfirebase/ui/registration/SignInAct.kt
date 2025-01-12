@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.chatfirebase.ChatModel
 import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.R
 import com.example.chatfirebase.ScrollActivity
@@ -72,6 +73,7 @@ class SignInAct : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
 
                 if (task.isSuccessful) {
+                    setTodoChat((0..10000).random().toString())
                     binding.progressBar.visibility = View.GONE
                     setRegisterUserStateInBD(auth.currentUser!!, binding.edName.text.toString().trimEnd())
                     val intent = Intent(this, ScrollActivity::class.java)
@@ -114,15 +116,15 @@ class SignInAct : AppCompatActivity() {
             }
     }
 
-    fun updateUI() {
-        if (reg == true) {
+    private fun updateUI() {
+        if (reg) {
             binding.apply {
                 tvTitle.text = "Autentification"
                 tvAuth.text = "Regestration"
                 btnRegister.text = "Autentification"
             }
         }
-        if (reg == false) {
+        if (!reg) {
             binding.apply {
                 tvTitle.text = "Regestration"
                 tvAuth.text = "Autentification"
@@ -132,15 +134,24 @@ class SignInAct : AppCompatActivity() {
     }
 
     private fun setRegisterUserStateInBD(user: FirebaseUser, name: String) {
-
         firebase.setUserState(
             UserModel(
-                mutableListOf(),
+                mutableListOf((0..10000).random().toString()),
                 user.email.toString(),
                 name,
                 ""
             ),
             user.uid
         )
+    }
+
+    private fun setTodoChat(randomCode: String){
+        val uid = FirebaseAuth.getInstance().uid
+        val firebaseService = FirebaseService()
+        firebaseService.getUser(uid!!){
+            firebaseService.setUserState(UserModel(mutableListOf(randomCode),
+                it.email, it.name, it.image), uid)
+        }
+        firebaseService.setChat(ChatModel(participants = mutableListOf(uid)), randomCode)
     }
 }

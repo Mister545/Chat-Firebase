@@ -15,9 +15,14 @@ import androidx.core.content.ContextCompat
 import com.example.chatfirebase.databinding.ActivityScroll2Binding
 import android.content.Intent
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.chatfirebase.ui.addNewGrope.AddNewGrope
 import com.example.chatfirebase.ui.searchNewChat.SearchNewChatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
 
 class ScrollActivity2 : AppCompatActivity() {
 
@@ -34,17 +39,19 @@ class ScrollActivity2 : AppCompatActivity() {
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.nav_header_background)
 
-
         binding.appBarScroll2.fabNewChat.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .setAnchorView(R.id.fabNewChat).show()
         }
 
+        setDataOnNavHeader()
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_scroll2)
 
+        val header = navView.getHeaderView(R.id.navHeaderScroll2)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_profile,
@@ -97,5 +104,26 @@ class ScrollActivity2 : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_scroll2)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    fun setDataOnNavHeader(){
+        val firebaseService = FirebaseService()
+        val uid = FirebaseAuth.getInstance().uid
+        firebaseService.getUser(uid!!){
+            val name = findViewById<TextView>(R.id.nameNav)
+            val email = findViewById<TextView>(R.id.gmailNav)
+            val image = findViewById<ImageView>(R.id.imageView)
+
+            name.text = it.name
+            email.text = it.email
+            if (it.image.isNotEmpty()) {
+                Glide.with(this)
+                    .load(it.image)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(image)
+            } else {
+                image.setImageResource(R.drawable.user_default)
+            }
+        }
     }
 }

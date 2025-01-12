@@ -1,7 +1,9 @@
 package com.example.chatfirebase.ui.searchNewChat
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +15,9 @@ import com.example.chatfirebase.AdapterNewChat
 import com.example.chatfirebase.ChatModel
 import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.R
+import com.example.chatfirebase.ScrollActivity2
 import com.example.chatfirebase.UserModel
+import com.example.chatfirebase.ui.chat.ChatActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.random.Random
 
@@ -35,6 +39,9 @@ class SearchNewChatActivity : AppCompatActivity(),  AdapterNewChat. OnItemClickL
 
 
         initSearchView()
+        val back = this.findViewById<ImageView>(R.id.buttonBackSearchnew)
+        back.setOnClickListener { finish() }
+
         val rcView = this.findViewById<RecyclerView>(R.id.rcNevChat)
         rcView.layoutManager = LinearLayoutManager(this)
         rcView.adapter = adapterUsers
@@ -42,6 +49,7 @@ class SearchNewChatActivity : AppCompatActivity(),  AdapterNewChat. OnItemClickL
 
     private fun initSearchView(){
         val searchView = this.findViewById<SearchView>(R.id.searchNewChat)
+        searchView.requestFocus()
 
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener,
             android.widget.SearchView.OnQueryTextListener {
@@ -104,62 +112,13 @@ class SearchNewChatActivity : AppCompatActivity(),  AdapterNewChat. OnItemClickL
             }
         return listUsersForFilter
     }
-    private fun getMyChatsUsers(callback: (Map<String, UserModel>) -> Unit) {
-        val myChats = mutableListOf<String>()
-
-        firebaseService.getAllUsers { allUsersHashMap ->
-            firebaseService.getAllChats { _, mapChats ->
-                mapChats.forEach { chat ->
-                    if (chat.value.participants.contains(uid)) {
-                        myChats.addAll(chat.value.participants)
-                    }
-                    val myChatsClean = myChats.filterNot { it == uid }
-                    Log.d("ooo", "my chats =============== $myChatsClean")
-                    val myChatsUsers = allUsersHashMap.filter { it.key in myChatsClean }
-                    Log.d("ooo", "u =============== $myChatsUsers")
-                    callback(myChatsUsers)
-                }
-            }
-        }
-    }
 
     override fun onItemClick(position: Int) {
         val item = adapterUsers.getList()[position]
         Log.d("ooo", "item ===== $item")
-        addNewChat(item)
+        val intent = Intent(this, ChatActivity::class.java)
+        intent.putExtra("clickedUser", item.keys.first())
+        startActivity(intent)
         finish()
-    }
-
-    private fun addNewChat(item: HashMap<String, UserModel>) {
-        val randomCode = (100000..999999).random().toString()
-        val chatModel = ChatModel(
-            participants = mutableListOf(uid!!, item.keys.first()),
-            massages = mutableListOf(),
-            lastMassage = "",
-            lastTime = ""
-        )
-        firebaseService.setChat(chatModel, randomCode)
-
-        firebaseService.getUser(uid){
-            val arr = mutableListOf<String>()  // Список
-            val chatsToAdd: MutableList<String> = it.chats ?: mutableListOf()
-            arr.addAll(chatsToAdd)
-
-                firebaseService.setUserState(userModel =
-                UserModel(
-                arr,
-                ),uid)
-        }
-        firebaseService.getUser(item.keys.first()){
-            val arr = mutableListOf<String>()  // Список
-            val chatsToAdd: MutableList<String> = it.chats ?: mutableListOf()
-
-            arr.addAll(chatsToAdd)
-
-            firebaseService.setUserState(userModel =
-            UserModel(
-                arr,
-            ),item.keys.first())
-        }
     }
 }

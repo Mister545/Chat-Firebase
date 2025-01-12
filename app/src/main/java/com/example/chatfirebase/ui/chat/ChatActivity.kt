@@ -35,14 +35,13 @@ class ChatActivity : AppCompatActivity() {
         }
 
         val clickedItem = intent.getStringExtra("clickedItem")
+        val clickedUser = intent.getStringExtra("clickedUser")
+
         val fragment = Chat()
         val bundle = Bundle()
         bundle.putString("clickedItem", clickedItem)
+        bundle.putString("clickedUser", clickedUser)
         fragment.arguments = bundle
-
-
-
-
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)
@@ -52,29 +51,6 @@ class ChatActivity : AppCompatActivity() {
         toolbarInit2()
 
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.toolbar_menu_edit_profile, menu)
-//        return true
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-//            R.id.action_edit -> {
-//                finish()
-//                val intent = Intent(this, ScrollActivity2::class.java)
-//                startActivity(intent)
-//                true
-//            }
-//
-//            R.id.action_settings -> {
-//                Toast.makeText(this, "Налаштування натиснуто", Toast.LENGTH_SHORT).show()
-//                true
-//            }
-//
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
 
     private fun toolbarInit() {
         val toolbar: Toolbar = findViewById(R.id.custom_toolbar)

@@ -29,6 +29,10 @@ class ChatAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<Chat
         @SuppressLint("NewApi")
         fun bind(userRv : ModelChat){
 
+            itemView.setOnClickListener {
+                listener.onItemClick(absoluteAdapterPosition)
+            }
+
             binding.apply {
                 val user = userRv.names.filter { it.name != meName }
                 tvName.text = user[0].name

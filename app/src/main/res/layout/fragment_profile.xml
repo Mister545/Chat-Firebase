@@ -14,7 +14,7 @@
         android:layout_marginBottom="731dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_percent="0.19"
+        app:layout_constraintGuide_percent="0.19005102"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -42,9 +42,9 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/imUserProfile"
+                    android:layout_width="160dp"
+                    android:layout_height="150dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
@@ -117,32 +117,13 @@
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/intoduseUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:paddingStart="15dp"
-            android:text="+380985822585"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="15dp"
-            android:text="Number"
-            android:textColor="@color/p_gray_text" />
-
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:paddingStart="15dp"
-            android:text="I am Denys"
+            android:text="i am Denys"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -155,7 +136,7 @@
             android:textColor="@color/p_gray_text" />
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -174,7 +155,7 @@
             android:textColor="@color/p_gray_text" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/dateOfBorn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

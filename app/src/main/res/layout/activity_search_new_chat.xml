@@ -19,9 +19,12 @@
         app:layout_constraintTop_toTopOf="parent" >
 
         <ImageView
+            android:id="@+id/buttonBackSearchnew"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_back_24" />
+            android:src="@drawable/ic_arrow_back_24"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="16dp" />
 
         <SearchView
             android:id="@+id/searchNewChat"
