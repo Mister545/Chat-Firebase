@@ -1,6 +1,7 @@
 package com.example.chatfirebase
 
 import android.annotation.SuppressLint
+import android.health.connect.datatypes.units.Mass
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +13,13 @@ import com.example.chatfirebase.databinding.ItemMessageReceivedBinding
 import com.example.chatfirebase.databinding.ItemMessageSentBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var messages = mutableListOf<MassageModel>()
+    val firebaseService = FirebaseService()
 
     private val VIEW_TYPE_SENT = 1
     private val VIEW_TYPE_RECEIVED = 2
@@ -22,59 +27,87 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class ReceivedMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
+        val firebaseService = FirebaseService()
         val binding = ItemMessageReceivedBinding.bind(view)
 
-        fun bind(massageModel: MassageModel){
+        @SuppressLint("NewApi")
+        fun bind(massageModel: MassageModel) {
             binding.tvMassage.text = massageModel.massage
-            binding.tvTime.text = massageModel.time
+            binding.tvTime.text = DataTimeHelper().convertIsoUtcFToLocal(massageModel.time!!)
             binding.apply {
                 var image =
                     "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
-                if (massageModel.image == "") {
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imUser)
-                } else {
-                    Log.d("ooo", "image ========== $image")
 
-                    image = massageModel.image!!
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imUser)
+                getAllData(massageModel) { massageModel, user ->
+                    if (user.image == "") {
+                        Glide.with(itemView.context)
+                            .load(R.drawable.im_dog)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(binding.imUser)
+                    } else {
+                        Log.d("ooo", "image ========== $image")
+
+                        image = user.image
+                        Glide.with(itemView.context)
+                            .load(image)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(binding.imUser)
+                    }
                 }
             }
         }
+
+        fun getAllData(massageModel: MassageModel, callback: (MassageModel, UserModel) -> Unit) {
+            firebaseService.getUser(massageModel.nameMassageUid!!) { user ->
+                callback(massageModel, user)
+            }
+        }
     }
+
 
     class SentMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
+        val firebaseService = FirebaseService()
         val binding = ItemMessageSentBinding.bind(view)
 
-        fun bind(massageModel: MassageModel){
+        @SuppressLint("NewApi")
+        fun bind(massageModel: MassageModel) {
             binding.tvMassage.text = massageModel.massage
-            binding.tvTime.text = massageModel.time
+            binding.tvMassage.text = massageModel.massage
+            val utcTime = Instant.parse(massageModel.time) // або завантажений з бази
+            val localTime = utcTime.atZone(ZoneId.systemDefault()) // Конвертуємо в локальний час
+            val formattedTime = localTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+            binding.tvTime.text = formattedTime
             binding.apply {
                 var image =
                     "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
-                if (massageModel.image == "") {
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imUser)
-                } else {
-                    Log.d("ooo", "image ========== $image")
 
-                    image = massageModel.image!!
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imUser)
+                getAllData(massageModel) { massageModel, user ->
+                    if (user.image == "") {
+                        Glide.with(itemView.context)
+                            .load(image)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(binding.imUser)
+                    } else {
+                        Log.d("ooo", "image ========== $image")
+
+                        image = user.image
+                        Glide.with(itemView.context)
+                            .load(image)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(binding.imUser)
+                    }
                 }
             }
         }
+        fun getAllData(massageModel: MassageModel, callback: (MassageModel, UserModel) -> Unit) {
+            firebaseService.getUser(massageModel.nameMassageUid!!) { user ->
+                callback(massageModel, user)
+            }
+        }
     }
+
+
 
     override fun getItemViewType(position: Int): Int {
         val message = messages[position]
@@ -110,6 +143,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
     fun setList(list: MutableList<MassageModel>) {
+        Log.d("ooo", "listtttt $list")
         messages = list
         notifyDataSetChanged()
     }

@@ -119,7 +119,6 @@ class ItemFragment : DialogFragment(), AdapterNewChat.OnItemClickListener {
     }
 
     fun searchUsers(text: String){
-
         if (text.isNotEmpty()) {
             firebaseService.getAllUsers { allUsers ->
                 getMyChatsUsers { users ->
@@ -136,7 +135,7 @@ class ItemFragment : DialogFragment(), AdapterNewChat.OnItemClickListener {
                     list = filteredUsers
                     animationEmpty(list)
 
-                    adapterUsers.updateAdapter(list)
+//                    adapterUsers.updateAdapter(list)
 
                     Log.d("ooo", "filteredUsers $filteredUsers")
                 }

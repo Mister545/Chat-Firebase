@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatfirebase.RcView.ModelUserRv
+import com.example.chatfirebase.RcView.ModelChat
 import com.example.chatfirebase.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
 
-        val codeChat: ModelUserRv = intent.getParcelableExtra("clickedItem")!!
+        val codeChat: ModelChat = intent.getParcelableExtra("clickedItem")!!
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

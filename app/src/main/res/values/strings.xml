@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ChatFirebase</string>
-    <string name="toolbar_name">%1$s |</string>
+    <string name="toolbar_name">Back</string>
     <string name="back_button_desc">Назад</string>
     <string name="edit_button_desc">Редагувати</string>
     <string name="settings_button_desc">Налаштування</string>
@@ -19,4 +19,13 @@
     <string name="menu_new_groups">Groups</string>
     <string name="menu_saved">Saved</string>
     <string name="menu_setting">Setting</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="add_new_grope_edit_t">Write name of new grope</string>
 </resources>

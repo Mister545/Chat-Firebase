@@ -7,14 +7,23 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.chatfirebase.ui.editProfile.EditProfile
 import com.example.chatfirebase.R
 import com.example.chatfirebase.databinding.FragmentProfileBinding
+import com.example.chatfirebase.ui.newGroup.NewGroupFragment
+import com.example.chatfirebase.ui.newGroup.NewGroupViewModel
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
+    companion object {
+        fun newInstance() = ProfileViewModel()
+    }
+
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

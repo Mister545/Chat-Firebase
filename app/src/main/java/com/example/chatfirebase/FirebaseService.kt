@@ -43,11 +43,6 @@ class FirebaseService {
         })
     }
 
-
-
-
-
-
     fun setUserState(userModel: UserModel, userUid: String){
         val databaseReference = database.getReference("users/$userUid")
         databaseReference.setValue(userModel)
@@ -108,7 +103,7 @@ class FirebaseService {
     fun getAllChats(callback: (Boolean, HashMap<String,ChatModel>) -> Unit) {
         val databaseReference = database.getReference("chats")
 
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val chats = HashMap<String,ChatModel>()
                 var isNull = true

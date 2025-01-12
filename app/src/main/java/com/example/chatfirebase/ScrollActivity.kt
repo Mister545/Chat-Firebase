@@ -3,17 +3,12 @@ package com.example.chatfirebase
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -21,17 +16,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatfirebase.RcView.ItemFragment
-import com.example.chatfirebase.RcView.ModelUserRv
-import com.example.chatfirebase.RcView.ViewAdapter
+import com.example.chatfirebase.RcView.ModelChat
+import com.example.chatfirebase.RcView.ChatAdapter
 import com.example.chatfirebase.databinding.ActivityScrollBinding
+import com.example.chatfirebase.ui.registration.SignInAct
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
-class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
+class ScrollActivity : AppCompatActivity(), ChatAdapter.OnItemClickListener {
 
     private lateinit var binding: ActivityScrollBinding
 
-    private val adapter =  ViewAdapter(this)
+    private val adapter =  ChatAdapter(this)
     private val firebaseService = FirebaseService()
     private val auth = FirebaseAuth.getInstance()
     private val uid = auth.currentUser?.uid
@@ -54,7 +50,7 @@ class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
             finish()
         }else{
             firebaseService.getUser(auth.uid!!) {
-                binding.include.toolbarName.text = getString(R.string.toolbar_name, it.name)
+//                binding.include.toolbarName.text = getString(R.string.toolbar_name, it.name)
             }
 
 //            binding.include.customToolbar.visibility = View.VISIBLE
@@ -185,7 +181,7 @@ class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
             binding.animEmpty.visibility = View.VISIBLE
         firebaseService.getAllUsers { listUsers ->
             val me = listUsers[uid]
-            val listNew = arrayListOf<ModelUserRv>()
+            val listNew = arrayListOf<ModelChat>()
             firebaseService.getAllChats { isNull, listChats ->
                 if (isNull) {
                     Log.d("ooo", "list Chats ============ nulll")
@@ -203,7 +199,7 @@ class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
                                 )
                             }")
                             listNew.add(
-                                ModelUserRv(
+                                ModelChat(
                                     myChat,
                                     arrayListOf(listUsers[userId]!!, me),
                                     listChats[myChat]!!.lastTime,
@@ -216,7 +212,7 @@ class ScrollActivity : AppCompatActivity(), ViewAdapter.OnItemClickListener {
                                 binding.animEmpty.visibility = View.GONE
 
                             if (chatsSize == 0) {
-                                adapter.setListMassages(listNew, me.name)
+                                adapter.setListChats(listNew, me.name)
                                 binding.rcView.layoutManager = LinearLayoutManager(this)
                                 binding.rcView.adapter = adapter
                             }

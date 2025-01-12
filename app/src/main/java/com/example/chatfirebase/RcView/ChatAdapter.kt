@@ -5,21 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.chatfirebase.FirebaseService
+import com.example.chatfirebase.DataTimeHelper
 import com.example.chatfirebase.R
-import com.example.chatfirebase.UserModel
 import com.example.chatfirebase.databinding.ItemChatBinding
 
 
-class ViewAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<ViewAdapter.ScrollHolder>(){
+class ChatAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<ChatAdapter.ScrollHolder>(){
 
     var meName = ""
 
-    private var listMassages = mutableListOf<ModelUserRv>()
+    private var listMassages = mutableListOf<ModelChat>()
+
     interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
@@ -27,40 +26,31 @@ class ViewAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<View
     inner class ScrollHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = ItemChatBinding.bind(view)
 
-        fun bind(userRv : ModelUserRv){
+        @SuppressLint("NewApi")
+        fun bind(userRv : ModelChat){
 
-            itemView.setOnClickListener {
-                listener.onItemClick(adapterPosition)
-            }
             binding.apply {
                 val user = userRv.names.filter { it.name != meName }
                 tvName.text = user[0].name
-                var image =
-                    "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
-                if (user[0].image == "") {
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imIcUser)
-                }else{
-                    image = user[0].image
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imIcUser)
-                }
-                tvLastTime.text = userRv.lastTime
+
+                tvLastTime.text = DataTimeHelper().convertIsoUtcFToLocal(userRv.lastTime)
                 tvLastMassage.text = userRv.lastMassage
+
+                val image = user[0].image
+                Glide.with(itemView.context)
+                    .load(image)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(binding.imIcUser)
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewAdapter.ScrollHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatAdapter.ScrollHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false)
         return ScrollHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewAdapter.ScrollHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChatAdapter.ScrollHolder, position: Int) {
         holder.bind(listMassages[position])
     }
 
@@ -69,7 +59,7 @@ class ViewAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<View
     }
 
     @SuppressLint("NotifyDataSetChanged", "SuspiciousIndentation")
-    fun setListMassages(list: MutableList<ModelUserRv>, userUid: String?){
+    fun setListChats(list: MutableList<ModelChat>, userUid: String?){
         listMassages = list
         if (userUid != null)
         meName = userUid
@@ -77,7 +67,7 @@ class ViewAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<View
         notifyDataSetChanged()
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun updateAdapter(listItems: List<ModelUserRv>){
+    fun updateAdapter(listItems: List<ModelChat>){
         Log.d("ooo", "listItems $listItems")
 
         listMassages.clear()
@@ -85,7 +75,7 @@ class ViewAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<View
         notifyDataSetChanged()
     }
 
-    fun getList(): MutableList<ModelUserRv>{
+    fun getList(): MutableList<ModelChat>{
         return listMassages
     }
 

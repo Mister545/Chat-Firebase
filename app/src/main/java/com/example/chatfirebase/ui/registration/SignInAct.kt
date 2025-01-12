@@ -1,4 +1,4 @@
-package com.example.chatfirebase
+package com.example.chatfirebase.ui.registration
 
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -8,7 +8,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.chatfirebase.databinding.ActivityScrollBinding
+import com.example.chatfirebase.FirebaseService
+import com.example.chatfirebase.R
+import com.example.chatfirebase.ScrollActivity
+import com.example.chatfirebase.UserModel
 import com.example.chatfirebase.databinding.ActivitySignInBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

@@ -30,4 +30,23 @@
     <!--    scroll act   -->
     <color name="scroll_toolbar">#252D3A</color>
     <color name="scroll_fab">#60A2DE</color>
+
+    <!--    settings act   -->
+    <color name="settings_text_blue">#85B9E4</color>
+    <color name="settings_text_red">#C16C74</color>
+    <color name="settings_nickname">#212D3B</color>
+    <color name="settings_background">#151E25</color>
+    <color name="settings_layout_background">#1D2733</color>
+
+    <!--    new grope act   -->
+    <color name="new_grope_background">#1D2733</color>
+    <color name="new_grope_item_background">#C16C74</color>
+    <color name="new_grope_text_gray">#717B87</color>
+
+    <!--   add new grope act   -->
+    <color name="add_new_grope_background">#1D2733</color>
+    <color name="add_new_grope_item_background">#C16C74</color>
+    <color name="add_new_grope_text_gray">#717B87</color>
+
+
 </resources>

@@ -14,23 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.chatfirebase.databinding.ActivityScroll2Binding
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.example.chatfirebase.RcView.ItemFragment
-import com.example.chatfirebase.RcView.ModelUserRv
-import com.example.chatfirebase.RcView.ViewAdapter
-import com.example.chatfirebase.databinding.ContentScroll2Binding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
+import com.example.chatfirebase.ui.addNewGrope.AddNewGrope
+import com.example.chatfirebase.ui.searchNewChat.SearchNewChatActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ScrollActivity2 : AppCompatActivity() {
 
@@ -48,10 +35,10 @@ class ScrollActivity2 : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.nav_header_background)
 
 
-        binding.appBarScroll2.fab.setOnClickListener { view ->
+        binding.appBarScroll2.fabNewChat.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+                .setAnchorView(R.id.fabNewChat).show()
         }
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -60,11 +47,45 @@ class ScrollActivity2 : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_profile, R.id.nav_new_group, R.id.nav_saved, R.id.nav_settings, R.id.nav_chat
+                R.id.nav_profile,
+                R.id.nav_new_group,
+                R.id.nav_saved,
+                R.id.nav_settings,
+                R.id.nav_chat
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val fabNewChat = findViewById<FloatingActionButton>(R.id.fabNewChat)
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            when (destination.id) {
+                R.id.nav_chat -> {
+                    fabNewChat.visibility = View.VISIBLE
+                    fabNewChat.setImageResource(R.drawable.baseline_add_24)
+                }
+                R.id.nav_new_group -> {
+                    fabNewChat.visibility = View.VISIBLE
+                    fabNewChat.setImageResource(R.drawable.arrow_forward_24px)
+                }
+                else -> fabNewChat.visibility = View.GONE
+            }
+        }
+        fabNewChat.setOnClickListener {
+            val intent = Intent(this, SearchNewChatActivity::class.java)
+            startActivity(intent)
+//            addNewChatListener()
+        }
+    }
+
+    fun addNewChatListener(){
+        val intent = Intent(this, AddNewGrope::class.java)
+        startActivity(intent)
+    }
+
+    fun addNewGropeListener(){
+        val intent = Intent(this, AddNewGrope::class.java)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -77,6 +98,4 @@ class ScrollActivity2 : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_scroll2)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
-
 }

@@ -8,5 +8,5 @@ data class UserModel(
     val chats: MutableList<String>? = mutableListOf(),
     val email: String = "",
     val name: String = "",
-    val image: String = ""
+    var image: String = ""
     ): Parcelable

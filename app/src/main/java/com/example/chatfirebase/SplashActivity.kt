@@ -25,7 +25,7 @@ class SplashActivity : AppCompatActivity() {
         anim.addAnimatorListener(object : Animator.AnimatorListener {
 
             override fun onAnimationEnd(p0: Animator) {
-                startActivity(Intent(this@SplashActivity, ScrollActivity::class.java))
+                startActivity(Intent(this@SplashActivity, ScrollActivity2::class.java))
                 finish()
             }
 
