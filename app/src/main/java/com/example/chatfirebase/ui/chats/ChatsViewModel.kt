@@ -6,31 +6,38 @@ import androidx.lifecycle.ViewModel
 import com.example.chatfirebase.ChatModel
 import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.RcView.ModelChat
+import com.example.chatfirebase.TYPE_TO_DO
 import com.example.chatfirebase.UserModel
-import com.example.chatfirebase.ui.registration.SignInAct
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.coroutineScope
 
 class ChatsViewModel : ViewModel() {
 
     val firebaseService = FirebaseService()
     val me: MutableLiveData<UserModel> = MutableLiveData()
     val uid = FirebaseAuth.getInstance().uid
-    var listChats: MutableLiveData<MutableList<ModelChat>> = MutableLiveData<MutableList<ModelChat>>()
+    var listChats: MutableLiveData<MutableList<ModelChat>> =
+        MutableLiveData<MutableList<ModelChat>>()
 
     fun chatsInit() {
-        getListChatsFromBd { chats ->
+        getMyListChatsFromBd { chats ->
             chats.forEach { chat ->
                 getUserModels(chat.value.participants) { arrayUserModels ->
                     val list: MutableList<ModelChat> = mutableListOf()
                     list.add(
                         ModelChat(
-                            chat.key,
-                            arrayUserModels,
-                            chat.value.lastTime,
-                            chat.value.lastMassage
+                            codeChat = chat.key,
+                            nameOfGroup = chat.value.nameOfGroup,
+                            imageOfGroup = chat.value.imageOfGroup,
+                            names = arrayUserModels,
+                            lastTime = chat.value.lastTime,
+                            lastMassage = chat.value.lastMassage,
+                            typeOfChat = chat.value.typeOfChat
                         )
                     )
+                    Log.d("ooo", "listCHATS from bd ${chats.size}")
+                    Log.d("ooo", "user models array ${arrayUserModels}")
+                    Log.d("ooo", "listCHATS ${list.size}")
+                    Log.d("ooo", "listCHATS ${list.size}")
                     listChats.value = list
                 }
             }
@@ -38,8 +45,12 @@ class ChatsViewModel : ViewModel() {
         getMyUserModel()
     }
 
-    fun getMyUserModel(){
-        firebaseService.getUser(uid!!){
+    fun destroy(){
+        firebaseService.removeChatsListener()
+    }
+
+    private fun getMyUserModel() {
+        firebaseService.getUser(uid!!) {
             me.value = it
         }
     }
@@ -75,21 +86,23 @@ class ChatsViewModel : ViewModel() {
         return result
     }
 
-    fun getListChatsFromBd(callback: (Map<String, ChatModel>) -> Unit)  {
-        firebaseService.getUser(uid!!){ me ->
+    private fun getMyListChatsFromBd(callback: (Map<String, ChatModel>) -> Unit) {
+        firebaseService.getUser(uid!!) { me ->
             val listChats: MutableMap<String, ChatModel> = mutableMapOf()
-            if (!me.chats.isNullOrEmpty()){
-                me.chats.forEach { chatCode ->
-                    firebaseService.getChat(chatCode){
-                        listChats[chatCode] = it
-                        callback(listChats)
+            if (!me.chats.isNullOrEmpty()) {
+                me.chats!!.forEach { chatCode ->
+                    firebaseService.getChat(chatCode) {
+                        if (it.typeOfChat != TYPE_TO_DO) {
+                            listChats[chatCode] = it
+                            callback(listChats)
+                        }
                     }
                 }
             }
         }
     }
 
-    fun authInit() : Boolean {
+    fun authInit(): Boolean {
         return FirebaseAuth.getInstance().currentUser != null
     }
 }

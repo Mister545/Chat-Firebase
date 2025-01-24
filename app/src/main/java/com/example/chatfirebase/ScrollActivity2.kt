@@ -20,6 +20,9 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatfirebase.ui.addNewGrope.AddNewGrope
+import com.example.chatfirebase.ui.chat.ChatActivity
+import com.example.chatfirebase.ui.registration.SignInAct
+import com.example.chatfirebase.ui.saved.SavedFragment
 import com.example.chatfirebase.ui.searchNewChat.SearchNewChatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
@@ -34,6 +37,7 @@ class ScrollActivity2 : AppCompatActivity() {
 
         binding = ActivityScroll2Binding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         setSupportActionBar(binding.appBarScroll2.toolbar)
 
@@ -75,13 +79,26 @@ class ScrollActivity2 : AppCompatActivity() {
                     fabNewChat.visibility = View.VISIBLE
                     fabNewChat.setImageResource(R.drawable.arrow_forward_24px)
                 }
+                R.id.nav_saved -> {
+                    fabNewChat.visibility = View.GONE
+                }
                 else -> fabNewChat.visibility = View.GONE
             }
         }
         fabNewChat.setOnClickListener {
             val intent = Intent(this, SearchNewChatActivity::class.java)
             startActivity(intent)
-//            addNewChatListener()
+        }
+    }
+
+    private fun clickOnSavedListener(){
+        FirebaseService().getUser(FirebaseAuth.getInstance().uid!!){
+            val codeSaved = it.chats!!.filter { it.length == 4 }
+            val fragment = SavedFragment()
+            val bundle = Bundle()
+            bundle.putString("clickedItem", codeSaved[0])
+            bundle.putBoolean("isToDo", true)
+            fragment.arguments = bundle
         }
     }
 
@@ -106,7 +123,7 @@ class ScrollActivity2 : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    fun setDataOnNavHeader(){
+    private fun setDataOnNavHeader(){
         val firebaseService = FirebaseService()
         val uid = FirebaseAuth.getInstance().uid
         firebaseService.getUser(uid!!){

@@ -9,7 +9,7 @@
     tools:context=".ui.editProfile.EditProfile">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
+        android:id="@+id/toolbarEditProfile"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:background="@color/p_ed_toolbar"
@@ -27,7 +27,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2">
+        app:layout_constraintTop_toBottomOf="@+id/toolbarEditProfile">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/editTextText2"
+                android:id="@+id/tName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -61,7 +61,7 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextText3"
+                android:id="@+id/tSecondName"
                 android:layout_marginStart="3dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                     android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/editTextText4"
+                    android:id="@+id/tAboutYou"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@color/p_ed_layout_background"

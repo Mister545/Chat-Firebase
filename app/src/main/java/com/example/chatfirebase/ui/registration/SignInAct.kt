@@ -8,10 +8,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import com.example.chatfirebase.ChatModel
+import com.example.chatfirebase.DataTimeHelper
 import com.example.chatfirebase.FirebaseService
+import com.example.chatfirebase.MassageModel
 import com.example.chatfirebase.R
 import com.example.chatfirebase.ScrollActivity
+import com.example.chatfirebase.TYPE_TO_DO
 import com.example.chatfirebase.UserModel
 import com.example.chatfirebase.databinding.ActivitySignInBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -37,47 +41,28 @@ class SignInAct : AppCompatActivity() {
             reg = !reg
         }
 
+
         binding.btnRegister.setOnClickListener {
 
-            binding.progressBar.visibility = View.VISIBLE
-
-            val email = binding.edGmail.text.toString()
-            val password = binding.edPassword.text.toString()
-            val name = binding.edName.text.toString()
-
-            firebase.getAllUsers {
-                if (email.isEmpty()) {
-                    Toast.makeText(this, "Enter Gmail", Toast.LENGTH_SHORT).show()
-                    binding.progressBar.visibility = View.GONE
-                }
-                else if (password.isEmpty()) {
-                    Toast.makeText(this, "Enter Password", Toast.LENGTH_SHORT).show()
-                    binding.progressBar.visibility = View.GONE
-                }
-                else if (name.isEmpty() || it.contains(name.trimEnd())) {
-                    Toast.makeText(this, "Enter Name or change other name", Toast.LENGTH_SHORT)
-                        .show()
-                    binding.progressBar.visibility = View.GONE
-                }
-                else if (reg)
-                    register(email, password)
-                else
-                    auth(email, password)
-            }
-
+            registerUserWithData()
         }
     }
 
-    private fun register(email: String, password: String) {
+    private fun delBase() {
+        firebase.delBase()
+
+    }
+
+    private fun register(email: String, password: String, name: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
 
                 if (task.isSuccessful) {
-                    setTodoChat((0..10000).random().toString())
                     binding.progressBar.visibility = View.GONE
-                    setRegisterUserStateInBD(auth.currentUser!!, binding.edName.text.toString().trimEnd())
+                    setRegisterUserStateInBD(auth.currentUser!!, name.trimEnd(), (1000..9999).random().toString())
                     val intent = Intent(this, ScrollActivity::class.java)
                     startActivity(intent)
+                    Toast.makeText(this, "add $name", Toast.LENGTH_SHORT).show()
                     Log.d(TAG, "createUserWithEmail:success")
                 } else {
                     binding.progressBar.visibility = View.GONE
@@ -91,7 +76,7 @@ class SignInAct : AppCompatActivity() {
             }
     }
 
-    private fun auth(email: String, password: String) {
+    fun auth(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -133,25 +118,105 @@ class SignInAct : AppCompatActivity() {
         }
     }
 
-    private fun setRegisterUserStateInBD(user: FirebaseUser, name: String) {
+    private fun setRegisterUserStateInBD(user: FirebaseUser, name: String, randomCodeForTodoChat: String) {
+        val firebaseService = FirebaseService()
+
         firebase.setUserState(
             UserModel(
-                mutableListOf((0..10000).random().toString()),
+                mutableListOf(randomCodeForTodoChat),
                 user.email.toString(),
                 name,
                 ""
             ),
             user.uid
         )
+
+        firebaseService.setChat(ChatModel(participants = mutableListOf(user.uid),
+            massages = mutableListOf(
+                MassageModel(user.uid, "Hi I am your todo chat", "", time = DataTimeHelper().getIsoUtcFormat())),
+            typeOfChat = TYPE_TO_DO, lastMassage = " ", lastTime = DataTimeHelper().getIsoUtcFormat()), chatId = randomCodeForTodoChat)
     }
 
-    private fun setTodoChat(randomCode: String){
-        val uid = FirebaseAuth.getInstance().uid
-        val firebaseService = FirebaseService()
-        firebaseService.getUser(uid!!){
-            firebaseService.setUserState(UserModel(mutableListOf(randomCode),
-                it.email, it.name, it.image), uid)
+
+    private fun registerUserWithData(){
+        binding.progressBar.visibility = View.VISIBLE
+
+        val email = binding.edGmail.text.toString()
+        val password = binding.edPassword.text.toString()
+        val name = binding.edName.text.toString()
+
+        firebase.getAllUsers {
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Enter Gmail", Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
+            }
+            else if (password.isEmpty()) {
+                Toast.makeText(this, "Enter Password", Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
+            }
+            else if (name.isEmpty() || it.contains(name.trimEnd())) {
+                Toast.makeText(this, "Enter Name or change other name", Toast.LENGTH_SHORT)
+                    .show()
+                binding.progressBar.visibility = View.GONE
+            }
+            else if (reg)
+                register(email, password, name)
+            else
+                auth(email, password)
         }
-        firebaseService.setChat(ChatModel(participants = mutableListOf(uid)), randomCode)
+    }
+
+    private fun autoReg(){
+        data class RegModel (
+            val name: String,
+            val email: String,
+            val password: String
+        )
+
+        FirebaseAuth.getInstance().signOut()
+
+        val usersReg: ArrayList<RegModel> = arrayListOf(
+            RegModel("user1","denys54533@gmail.com", "1111111111"),
+            RegModel("user2","denys545339@gmail.com", "1111111111"),
+            RegModel("user3","brawlstarsden09@gmail.com", "1111111111"),
+            RegModel("user4","kriptoden545@gmail.com", "1111111111"),
+            RegModel("user5","instagramems54@gmail.com", "1111111111"),
+        )
+
+        var i: Int =1
+        usersReg.forEach {
+            register2(it.email, it.password, it.name){
+                    FirebaseAuth.getInstance().signOut()
+            }
+        }
+    }
+
+    private fun register2(email: String, password: String, name: String, callback: (Boolean) -> Unit) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+
+                if (task.isSuccessful) {
+                    binding.progressBar.visibility = View.GONE
+
+                    setRegisterUserStateInBD(
+                        auth.currentUser!!,
+                        name.trimEnd(),
+                        (1000..9000).random().toString()
+                    )
+//                    val intent = Intent(this, ScrollActivity::class.java)
+//                    startActivity(intent)
+                    Toast.makeText(this, "add $name", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "createUserWithEmail:success")
+                } else {
+                    binding.progressBar.visibility = View.GONE
+                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    Toast.makeText(
+                        baseContext,
+                        "Authentication failed.",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                callback(task.isSuccessful)
+            }
     }
 }

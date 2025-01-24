@@ -12,16 +12,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatfirebase.AdapterNewChat
-import com.example.chatfirebase.ChatModel
 import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.R
-import com.example.chatfirebase.ScrollActivity2
 import com.example.chatfirebase.UserModel
 import com.example.chatfirebase.ui.chat.ChatActivity
 import com.google.firebase.auth.FirebaseAuth
-import kotlin.random.Random
 
-class SearchNewChatActivity : AppCompatActivity(),  AdapterNewChat. OnItemClickListener{
+class SearchNewChatActivity : AppCompatActivity(),  AdapterNewChat.OnItemClickListener{
     val firebaseService = FirebaseService()
     val uid = FirebaseAuth.getInstance().uid
      var adapterUsers =  AdapterNewChat(this)
@@ -105,12 +102,13 @@ class SearchNewChatActivity : AppCompatActivity(),  AdapterNewChat. OnItemClickL
         val listUsersForFilter: HashMap<String, UserModel> = hashMapOf()
 
             for (user in allUsers){
-                val hasCommonElements = me.chats!!.any { it in user.value.chats!! }
-                if (!hasCommonElements){
-                    listUsersForFilter[user.key] = user.value
-                }
+//                val hasCommonElements = me.chats!!.any { it in user.value.chats!! }
+//                if (!hasCommonElements){
+//                    listUsersForFilter[user.key] = user.value
+//                }
             }
-        return listUsersForFilter
+        allUsers.remove(uid)
+        return allUsers
     }
 
     override fun onItemClick(position: Int) {

@@ -1,6 +1,8 @@
 package com.example.chatfirebase
 
+import android.net.Uri
 import android.util.Log
+import android.view.View
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -8,12 +10,33 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 
 class FirebaseService {
 
     val database = FirebaseDatabase.getInstance()
 
+    private var valueEventListener: ValueEventListener? = null
+
     private var lastMessageId: String? = null
+
+    fun removeChatsListener() {
+        val databaseReference = database.getReference("chats")
+        valueEventListener?.let {
+            databaseReference.removeEventListener(it)
+            valueEventListener = null
+        }
+    }
+
+    fun removeUsersListener() {
+        val databaseReference = database.getReference("users")
+        valueEventListener?.let {
+            databaseReference.removeEventListener(it)
+            valueEventListener = null
+        }
+    }
+
 
     fun listenerMassage(room: String, callback: (MassageModel) -> Unit) {
         val database = FirebaseDatabase.getInstance()
@@ -43,30 +66,49 @@ class FirebaseService {
         })
     }
 
-    fun setUserState(userModel: UserModel, userUid: String){
+    fun setUserState(userModel: UserModel, userUid: String): Boolean {
         val databaseReference = database.getReference("users/$userUid")
-        databaseReference.setValue(userModel)
+        return databaseReference.setValue(userModel).isSuccessful
     }
 
-    fun setImage(imageModel: Map<String,String>){
+    fun setUserState(userModel: UserModel, userUid: String, callback: (Boolean) -> Unit) {
+        val databaseReference = database.getReference("users/$userUid")
+        databaseReference.setValue(userModel).addOnCompleteListener{
+            callback(it.isSuccessful)
+        }
+    }
+
+    fun delBase() {
+        val databaseReference = database.getReference()
+        databaseReference.removeValue().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("ooo", "Дані успішно видалені!")
+            } else {
+                Log.e("ooo", "Помилка видалення даних: ${task.exception?.message}")
+            }
+        }
+    }
+
+    fun setImage(imageModel: Map<String, String>) {
         val databaseReference = database.getReference("images")
         databaseReference.setValue(imageModel)
     }
 
-    fun setChat(chat: ChatModel, chatId: String){
+    fun setChat(chat: ChatModel, chatId: String) {
 
         val databaseReference = database.getReference("chats/$chatId")
         databaseReference.setValue(chat)
     }
 
-    fun getChat(chatId: String, callback: (ChatModel) -> Unit){
+    fun getChat(chatId: String, callback: (ChatModel) -> Unit) {
         val databaseReference = database.getReference("chats/$chatId")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.getValue(ChatModel::class.java) == null){
+                if (dataSnapshot.getValue(ChatModel::class.java) == null) {
                     callback(
-                        ChatModel(mutableListOf(), mutableListOf()))
-                }else {
+                        ChatModel(mutableListOf(), mutableListOf())
+                    )
+                } else {
                     val chat = dataSnapshot.getValue(ChatModel::class.java)!!
                     callback(chat)
                 }
@@ -77,17 +119,36 @@ class FirebaseService {
             }
         })
     }
-    fun getImage(uid: String, callback: (String) -> Unit){
+
+    fun uploadChatImage(imageUri: Uri, callback: (UploadTask) -> Unit) {
+        Log.d("ooo", "image URI : ${imageUri.lastPathSegment}")
+        val storageRef =
+            FirebaseStorage.getInstance().reference.child("imagesChat/${imageUri.lastPathSegment}")
+        val uploadTask = storageRef.putFile(imageUri)
+
+        callback(uploadTask)
+    }
+
+    fun uploadProfileImage(imageUri: Uri, callback: (UploadTask) -> Unit) {
+        Log.d("ooo", "image URI : ${imageUri.lastPathSegment}")
+        val storageRef =
+            FirebaseStorage.getInstance().reference.child("imagesProfile/${imageUri.lastPathSegment}")
+        val uploadTask = storageRef.putFile(imageUri)
+
+        callback(uploadTask)
+    }
+
+    fun getImage(uid: String, callback: (String) -> Unit) {
         val databaseReference = database.getReference("images/$uid")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val genericTypeIndicator = object : GenericTypeIndicator<Map<String, String>>() {}
 
-                if (dataSnapshot.getValue(String::class.java) == null){
+                if (dataSnapshot.getValue(String::class.java) == null) {
                     callback(
                         String()
                     )
-                }else {
+                } else {
                     val image = dataSnapshot.getValue(String::class.java)
                     callback(image!!)
 
@@ -100,21 +161,20 @@ class FirebaseService {
         })
     }
 
-    fun getAllChats(callback: (Boolean, HashMap<String,ChatModel>) -> Unit) {
+    fun getAllChats(callback: (Boolean, HashMap<String, ChatModel>) -> Unit) {
         val databaseReference = database.getReference("chats")
 
-        databaseReference.addValueEventListener(object : ValueEventListener {
+        valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val chats = HashMap<String,ChatModel>()
+                val chats = HashMap<String, ChatModel>()
                 var isNull = true
 
                 for (snapshot in dataSnapshot.children) {
                     val chat = snapshot.getValue(ChatModel::class.java)
                     if (chat != null) {
-
                         chats[snapshot.key.toString()] = chat
                         isNull = false
-                    }else {
+                    } else {
                         chats["dgdhdhtj"] = ChatModel(mutableListOf("null"))
                         isNull = true
                     }
@@ -125,19 +185,43 @@ class FirebaseService {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                println("Помилка зчитування з Firebase: ${error.message}")
+                Log.e("Firebase", "Помилка зчитування з Firebase: ${error.message}")
             }
-        })
+        }
+
+        // Додаємо слухача
+        databaseReference.addValueEventListener(valueEventListener!!)
     }
 
 
-    fun getUser(userUid: String, callback: (UserModel) -> Unit){
+    fun getUser(userUid: String, callback: (UserModel) -> Unit) {
         val databaseReference = database.getReference("users/${userUid}")
-        databaseReference.addValueEventListener(object : ValueEventListener {
+
+        valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.getValue(UserModel::class.java) == null){
+                if (dataSnapshot.getValue(UserModel::class.java) == null) {
                     println()
-                }else {
+                } else {
+                    val userSnap = dataSnapshot.getValue(UserModel::class.java)!!
+                    callback(userSnap)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Помилка зчитування з Firebase: ${error.message}")
+            }
+        }
+        databaseReference.addValueEventListener(valueEventListener!!)
+
+    }
+
+    fun getUserSingleTime(userUid: String, callback: (UserModel) -> Unit) {
+        val databaseReference = database.getReference("users/${userUid}")
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.getValue(UserModel::class.java) == null) {
+                    println()
+                } else {
                     val userSnap = dataSnapshot.getValue(UserModel::class.java)!!
                     callback(userSnap)
                 }
@@ -169,7 +253,7 @@ class FirebaseService {
 //            })
 //    }
 
-    fun getAllUsers(callback: (HashMap<String, UserModel>) -> Unit){
+    fun getAllUsers(callback: (HashMap<String, UserModel>) -> Unit) {
         val databaseReference = database.getReference("users")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -177,9 +261,11 @@ class FirebaseService {
                 if (dataSnapshot.exists()) {
                     // Проходимо по всіх дочірніх елементах, якщо вони існують
                     for (snapshot in dataSnapshot.children) {
-                        val user = snapshot.getValue(UserModel::class.java) // Отримуємо ключ (ідентифікатор користувача)
+                        val user =
+                            snapshot.getValue(UserModel::class.java) // Отримуємо ключ (ідентифікатор користувача)
                         user?.let {
-                            listUsers[snapshot.key.toString()] = it // Додаємо ідентифікатор користувача до списку
+                            listUsers[snapshot.key.toString()] =
+                                it // Додаємо ідентифікатор користувача до списку
                         }
                     }
                 } else {
@@ -196,13 +282,15 @@ class FirebaseService {
 
     fun getEventMassages(chatId: String, callback: (MutableList<MassageModel>) -> Unit) {
         val databaseReference = database.getReference("chats/$chatId/massages")
-        databaseReference.addValueEventListener(object : ValueEventListener {
+        valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (!dataSnapshot.exists()) {
                     callback(mutableListOf(MassageModel("", "", "")))
                 } else {
-                    val genericTypeIndicator = object : GenericTypeIndicator<MutableList<MassageModel>>() {}
-                    val chat: MutableList<MassageModel>? = dataSnapshot.getValue(genericTypeIndicator)
+                    val genericTypeIndicator =
+                        object : GenericTypeIndicator<MutableList<MassageModel>>() {}
+                    val chat: MutableList<MassageModel>? =
+                        dataSnapshot.getValue(genericTypeIndicator)
                     if (chat != null) {
                         callback(chat)
                     } else {
@@ -214,7 +302,8 @@ class FirebaseService {
             override fun onCancelled(error: DatabaseError) {
                 println("Помилка зчитування з Firebase: ${error.message}")
             }
-        })
+        }
+        databaseReference.addValueEventListener(valueEventListener!!)
     }
 
 

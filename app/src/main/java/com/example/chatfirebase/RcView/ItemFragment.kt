@@ -1,35 +1,22 @@
 package com.example.chatfirebase.RcView
 
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.DialogFragment
 import com.example.chatfirebase.AdapterNewChat
 import com.example.chatfirebase.FirebaseService
-import com.example.chatfirebase.MainActivity
 import com.example.chatfirebase.R
-import com.example.chatfirebase.RcView.placeholder.PlaceholderContent
 import com.example.chatfirebase.ScrollActivity
 import com.example.chatfirebase.UserModel
-import com.example.chatfirebase.databinding.FragmentSearchUsersBinding
 import com.example.chatfirebase.databinding.FragmentSearchUsersListBinding
 import com.google.firebase.auth.FirebaseAuth
 

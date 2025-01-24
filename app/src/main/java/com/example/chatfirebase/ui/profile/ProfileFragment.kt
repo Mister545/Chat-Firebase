@@ -1,9 +1,12 @@
 package com.example.chatfirebase.ui.profile
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -24,6 +27,20 @@ class ProfileFragment : Fragment() {
     companion object {
         fun newInstance() = ProfileViewModel()
     }
+
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    requireActivity().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                    viewModel.uploadImageUri(uri)
+                    Log.d("ooo", "Selected image URI: $uri")
+                }
+            }
+        }
 
     private val viewModel: ProfileViewModel by viewModels()
 
@@ -46,22 +63,33 @@ class ProfileFragment : Fragment() {
 
         viewModel.init()
 
+        binding.setImagePrifileFAB.setOnClickListener {
+            selectProfileImage()
+        }
+
         viewModel.user.observe(viewLifecycleOwner) {
             _binding?.let { binding ->
                 binding.nameT.text = it.name
                 binding.email.text = it.email
-                binding.intoduseUser.text = "my name is ${it.name}"
-                if (it.image.isNotEmpty()) {
-                    Glide.with(requireContext())
-                        .load(it.image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imUserProfile)
-                } else {
-                    binding.imUserProfile.setImageResource(R.drawable.user_default)
-                }
+                binding.intoduseUser.text =
+                    if (it.introduceYourSelf.isNullOrEmpty()) "My name is ${it.name}" else it.name
+                binding.dateOfBorn.text =
+                    if (it.dateOfBerth.isNullOrEmpty()) "--.--.----" else it.dateOfBerth
+                Glide.with(requireContext())
+                    .load(it.image)
+                    .error(R.drawable.user_default)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(binding.imUserProfile)
             }
         }
+    }
 
+    private fun selectProfileImage() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            type = "image/*"
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        resultLauncher.launch(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -76,10 +104,13 @@ class ProfileFragment : Fragment() {
                 startActivity(intent)
                 true
             }
+
             R.id.action_settings -> {
-                Toast.makeText(requireContext(), "Налаштування натиснуто", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Налаштування натиснуто", Toast.LENGTH_SHORT)
+                    .show()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

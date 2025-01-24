@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UserModel(
-    val chats: MutableList<String>? = mutableListOf(),
+    var chats: MutableList<String>? = mutableListOf(),
     val email: String = "",
-    val name: String = "",
+    var name: String = "",
     var image: String = "",
     var introduceYourSelf: String? = "",
     var dateOfBerth: String? = "0.0.0000"

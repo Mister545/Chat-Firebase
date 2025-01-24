@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
+import com.example.chatfirebase.ui.registration.SignInAct
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -16,6 +17,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+
 
         val anim = findViewById<LottieAnimationView>(R.id.animLoad)
         anim.speed = 0.75F

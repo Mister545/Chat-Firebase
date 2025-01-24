@@ -1,16 +1,13 @@
 package com.example.chatfirebase
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.chatfirebase.RcView.ModelChat
 import com.example.chatfirebase.databinding.ItemAddNewUserBinding
-import java.util.ArrayList
 
 class AdapterNewChat(val listener: OnItemClickListener) :
     RecyclerView.Adapter<AdapterNewChat.AdapterNewChatHolder>() {
@@ -25,29 +22,21 @@ class AdapterNewChat(val listener: OnItemClickListener) :
     inner class AdapterNewChatHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = ItemAddNewUserBinding.bind(view)
 
+        @SuppressLint("ResourceAsColor")
         fun bind(user: UserModel) {
 
             itemView.setOnClickListener {
+                itemView.setBackgroundColor(R.color.date_picker_button)
                 listener.onItemClick(absoluteAdapterPosition)
             }
 
             binding.apply {
-                var image =
-                    "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
-                if (user.image == "") {
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imageView)
-                } else {
-                    Log.d("ooo", "image ========== $image")
 
-                    image = user.image!!
-                    Glide.with(itemView.context)
-                        .load(image)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(binding.imageView)
-                }
+                Glide.with(itemView.context)
+                    .load(user.image)
+                    .error(R.drawable.user_default)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(binding.imageView)
                 binding.tvName.text = user.name
             }
         }

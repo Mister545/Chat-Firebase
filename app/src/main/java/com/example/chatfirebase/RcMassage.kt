@@ -25,7 +25,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_RECEIVED = 2
     val auth = Firebase.auth.currentUser
 
-    class ReceivedMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class ReceivedMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val firebaseService = FirebaseService()
         val binding = ItemMessageReceivedBinding.bind(view)
@@ -65,7 +65,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
 
-    class SentMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class SentMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val firebaseService = FirebaseService()
         val binding = ItemMessageSentBinding.bind(view)
@@ -79,34 +79,25 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val formattedTime = localTime.format(DateTimeFormatter.ofPattern("HH:mm"))
             binding.tvTime.text = formattedTime
             binding.apply {
-                var image =
+                val imageDefault =
                     "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
 
                 getAllData(massageModel) { massageModel, user ->
-                    if (user.image == "") {
-                        Glide.with(itemView.context)
-                            .load(image)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(binding.imUser)
-                    } else {
-                        Log.d("ooo", "image ========== $image")
-
-                        image = user.image
-                        Glide.with(itemView.context)
-                            .load(image)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(binding.imUser)
-                    }
+                    Glide.with(itemView.context)
+                        .load(user.image)
+                        .error(imageDefault)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(binding.imUser)
                 }
             }
         }
+
         fun getAllData(massageModel: MassageModel, callback: (MassageModel, UserModel) -> Unit) {
             firebaseService.getUser(massageModel.nameMassageUid!!) { user ->
                 callback(massageModel, user)
             }
         }
     }
-
 
 
     override fun getItemViewType(position: Int): Int {
@@ -120,10 +111,12 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_SENT) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_message_sent, parent, false)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_message_sent, parent, false)
             SentMessageViewHolder(view)
         } else {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_message_received, parent, false)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_message_received, parent, false)
             ReceivedMessageViewHolder(view)
         }
     }

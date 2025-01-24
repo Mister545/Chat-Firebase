@@ -2,23 +2,29 @@ package com.example.chatfirebase.ui.editProfile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import androidx.fragment.app.viewModels
 import com.example.chatfirebase.R
 import com.example.chatfirebase.databinding.ActivityEditProfileBinding
+import com.example.chatfirebase.ui.newGroup.NewGroupViewModel
 import com.example.chatfirebase.ui.profile.ProfileFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import java.util.Calendar
 
 class EditProfile : AppCompatActivity() {
 
+    private val viewModel: EditProfileViewModel by viewModels()
     lateinit var binding: ActivityEditProfileBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +32,23 @@ class EditProfile : AppCompatActivity() {
         setContentView(binding.root)
 
         toolbarInit()
-        calendarInit()
         bottomSheetInit()
 
+        initData()
+
+        calendarInit {
+            viewModel.dataOfBirth.value = it
+            binding.tDate.text = it
+        }
+    }
+
+    private fun initData() {
+        viewModel.user.observe(this){
+            binding.tName.setText(it.name)
+            binding.tSecondName.setText(it.name)
+            binding.tAboutYou.setText(it.introduceYourSelf)
+            binding.tDate.text = if (it.dateOfBerth == "0.0.0000") "--.--.----" else it.dateOfBerth
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -39,8 +59,16 @@ class EditProfile : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_edit -> {
-                val intent = Intent(this, ProfileFragment::class.java)
-                startActivity(intent)
+                viewModel.changeUserData(
+                    binding.tName.text.toString(),
+                    binding.tSecondName.text.toString(),
+                    binding.tAboutYou.text.toString()
+                ){
+                    if (it)
+                        finish()
+                    else
+                        Log.d("ooo", "error load data to bd")
+                }
                 true
             }
 
@@ -54,7 +82,7 @@ class EditProfile : AppCompatActivity() {
     }
 
     private fun toolbarInit() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar2)
+        val toolbar: Toolbar = findViewById(R.id.toolbarEditProfile)
 
         setSupportActionBar(toolbar)
 
@@ -67,7 +95,7 @@ class EditProfile : AppCompatActivity() {
         }
     }
 
-    private fun calendarInit() {
+    private fun calendarInit(callback: (String) -> Unit) {
         val bSaveDataBirth = findViewById<Button>(R.id.save_data_birth)
 
         val dayPicker: NumberPicker = findViewById(R.id.dayPicker)
@@ -129,6 +157,7 @@ class EditProfile : AppCompatActivity() {
                 "Дата народження: ${selectedDay}/${selectedMonth}/${selectedYear}",
                 Toast.LENGTH_SHORT
             ).show()
+            callback("${selectedDay}/${selectedMonth}/${selectedYear}")
         }
     }
 
