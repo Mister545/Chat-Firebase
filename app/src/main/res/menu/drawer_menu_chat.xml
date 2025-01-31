@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:title="Головна"
+        android:icon="@drawable/chat_24px"/>
+    <item
+        android:id="@+id/nav_settings"
+        android:title="Налаштування"
+        android:icon="@drawable/settings_24px"/>
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Вийти"
+        android:icon="@drawable/ic_user_rc_view"/>
+</menu>

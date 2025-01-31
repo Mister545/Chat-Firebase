@@ -1,7 +1,6 @@
 package com.example.chatfirebase
 
 import android.annotation.SuppressLint
-import android.health.connect.datatypes.units.Mass
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var messages = mutableListOf<MassageModel>()
+    var messages = listOf<MessageModel>()
     val firebaseService = FirebaseService()
 
     private val VIEW_TYPE_SENT = 1
@@ -31,7 +30,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val binding = ItemMessageReceivedBinding.bind(view)
 
         @SuppressLint("NewApi")
-        fun bind(massageModel: MassageModel) {
+        fun bind(massageModel: MessageModel) {
             binding.tvMassage.text = massageModel.massage
             binding.tvTime.text = DataTimeHelper().convertIsoUtcFToLocal(massageModel.time!!)
             binding.apply {
@@ -57,7 +56,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        fun getAllData(massageModel: MassageModel, callback: (MassageModel, UserModel) -> Unit) {
+        fun getAllData(massageModel: MessageModel, callback: (MessageModel, UserModel) -> Unit) {
             firebaseService.getUser(massageModel.nameMassageUid!!) { user ->
                 callback(massageModel, user)
             }
@@ -71,7 +70,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val binding = ItemMessageSentBinding.bind(view)
 
         @SuppressLint("NewApi")
-        fun bind(massageModel: MassageModel) {
+        fun bind(massageModel: MessageModel) {
             binding.tvMassage.text = massageModel.massage
             binding.tvMassage.text = massageModel.massage
             val utcTime = Instant.parse(massageModel.time) // або завантажений з бази
@@ -92,7 +91,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        fun getAllData(massageModel: MassageModel, callback: (MassageModel, UserModel) -> Unit) {
+        fun getAllData(massageModel: MessageModel, callback: (MessageModel, UserModel) -> Unit) {
             firebaseService.getUser(massageModel.nameMassageUid!!) { user ->
                 callback(massageModel, user)
             }
@@ -135,7 +134,7 @@ class RcMassage : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setList(list: MutableList<MassageModel>) {
+    fun setList(list: List<MessageModel>) {
         Log.d("ooo", "listtttt $list")
         messages = list
         notifyDataSetChanged()

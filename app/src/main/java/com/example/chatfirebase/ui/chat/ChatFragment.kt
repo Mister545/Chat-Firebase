@@ -8,32 +8,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.chatfirebase.ChatModel
+import com.example.chatfirebase.FirebaseService
+import com.example.chatfirebase.MessageModel
 import com.example.chatfirebase.R
 import com.example.chatfirebase.RcMassage
 import com.example.chatfirebase.TYPE_CHAT
 import com.example.chatfirebase.TYPE_GROUP
 import com.example.chatfirebase.TYPE_OF_CHAT
 import com.example.chatfirebase.TYPE_TO_DO
+import com.example.chatfirebase.UserModel
 import com.example.chatfirebase.databinding.FragmentChatBinding
+import com.example.chatfirebase.ui.ChatState
 
 class ChatFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ChatFragment()
+    private val viewModel: ChatViewModel by lazy {
+        ViewModelProvider(
+            this,
+            ChatViewModelFactory(FirebaseService())
+        )[ChatViewModel::class.java]
     }
-
-    private val viewModel: ChatViewModel by viewModels()
     val adapter = RcMassage()
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +45,7 @@ class ChatFragment : Fragment() {
     ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,63 +58,61 @@ class ChatFragment : Fragment() {
         Log.d("ooo", "is to do in chat frag $type")
         viewModel.start(chatId = chatId, clickedUser = clickedUser)
 
-        viewModel.listChat.observe(requireActivity()) {
-            Log.d("ooo", "null? list ${it}")
-            adapter.setList(it)
-            binding.rcView.layoutManager = LinearLayoutManager(requireContext())
-            binding.rcView.adapter = adapter
-            binding.rcView.scrollToPosition(adapter.itemCount - 1)
+        viewModel.state.observe(viewLifecycleOwner) {
+            initRcView(it.messages)
         }
 
         binding.bSend.setOnClickListener {
-            val massage = binding.editTextText.text.toString()
+            val message = binding.editTextText.text.toString()
             binding.editTextText.text.clear()
-            viewModel.sentMassage(massage = massage, chatId = chatId, typeOfChat = type, userCode = clickedUser)
-        }
-
-        initToolbar(type)
-        viewModel.group.observe(requireActivity()){
-            initToolbar(it.typeOfChat)
-        }
-        viewModel.group.observe(requireActivity()){
-            initToolbar(it.typeOfChat)
+            viewModel.sendMessage(
+                messageText = message,
+                chatId = chatId!!
+            )
         }
     }
 
-    private fun initToolbar(type: String?) {
+    private fun initRcView(list: List<MessageModel>) {
+        Log.d("ooo", "null? list ${list}")
+        adapter.setList(list)
+        binding.rcView.layoutManager = LinearLayoutManager(requireContext())
+        binding.rcView.adapter = adapter
+        binding.rcView.scrollToPosition(adapter.itemCount - 1)
+    }
+
+    private fun initToolbar(type: String?, state: ChatState) {
         when (type) {
             TYPE_TO_DO -> {
                 initToDoToolbar()
             }
+
             TYPE_GROUP -> {
-                initGropeToolbar()
+                initGropeToolbar(state.chatType!!)
             }
+
             TYPE_CHAT -> {
-                initChatToolbar()
-            }else -> {
-                initChatToolbar()
+                initChatToolbar(state.partner!!)
+            }
+
+            else -> {
+                initChatToolbar(state.partner)
             }
         }
     }
 
-    private fun initChatToolbar() {
-        viewModel.partner.observe(requireActivity()) {
-            Log.d("ooo", "pertner $it")
+    private fun initChatToolbar(partner: UserModel?) {
+
+        if (partner != null) {
+            Log.d("ooo", "pertner $partner")
             val toolbarImage = requireActivity().findViewById<ImageView>(R.id.iconUser)
             val toolbarName = requireActivity().findViewById<TextView>(R.id.toolbarTitle)
-            if (it.image.isEmpty()) {
-                toolbarName.text = it.name
-                Glide.with(requireContext())
-                    .load(R.drawable.user_default)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(toolbarImage)
-            } else {
-                toolbarName.text = it.name
-                Glide.with(requireContext())
-                    .load(it.image)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(toolbarImage)
-            }
+
+            toolbarName.text = partner.name
+            Glide.with(requireContext())
+                .load(partner.image)
+                .error(R.drawable.user_default)
+                .apply(RequestOptions.circleCropTransform())
+                .into(toolbarImage)
         }
     }
 
@@ -125,29 +128,15 @@ class ChatFragment : Fragment() {
             .into(toolbarImage)
     }
 
-    private fun initGropeToolbar() {
-        viewModel.group.observe(requireActivity()) {
-            Log.d("ooo", "pertner $it")
-            val toolbarImage = requireActivity().findViewById<ImageView>(R.id.iconUser)
-            val toolbarName = requireActivity().findViewById<TextView>(R.id.toolbarTitle)
-            if (it.imageOfGroup.isNullOrEmpty()) {
-                toolbarName.text = it.nameOfGroup
-                Glide.with(requireContext())
-                    .load(R.drawable.user_default)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(toolbarImage)
-            } else {
-                toolbarName.text = it.nameOfGroup
-                Glide.with(requireContext())
-                    .load(it.imageOfGroup)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(toolbarImage)
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.destroy()
+    private fun initGropeToolbar(chat: ChatModel) {
+        Log.d("ooo", "pertner $chat")
+        val toolbarImage = requireActivity().findViewById<ImageView>(R.id.iconUser)
+        val toolbarName = requireActivity().findViewById<TextView>(R.id.toolbarTitle)
+        toolbarName.text = chat.nameOfGroup
+        Glide.with(requireContext())
+            .load(chat.imageOfGroup)
+            .error(R.drawable.group_ic)
+            .apply(RequestOptions.circleCropTransform())
+            .into(toolbarImage)
     }
 }

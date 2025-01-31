@@ -1,35 +1,31 @@
 package com.example.chatfirebase.ui.saved
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatfirebase.R
+import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.RcMassage
-import com.example.chatfirebase.TYPE_TO_DO
-import com.example.chatfirebase.databinding.FragmentChatBinding
 import com.example.chatfirebase.databinding.FragmentSavedBinding
 import com.example.chatfirebase.ui.chat.ChatViewModel
+import com.example.chatfirebase.ui.chat.ChatViewModelFactory
 
 class SavedFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = SavedFragment()
+    private val viewModel: ChatViewModel by lazy {
+        ViewModelProvider(
+            this,
+            ChatViewModelFactory(FirebaseService())
+        )[ChatViewModel::class.java]
     }
-
-    private val viewModel: ChatViewModel by viewModels()
     val adapter = RcMassage()
     private var _binding: FragmentSavedBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,9 +46,9 @@ class SavedFragment : Fragment() {
 
         Log.d("ooo", "data saved $chatId, $clickedUser")
 
-        viewModel.listChat.observe(viewLifecycleOwner) { list ->
-            Log.d("ooo", "null? list $list")
-            adapter.setList(list)
+        viewModel.state.observe(viewLifecycleOwner) {
+            Log.d("ooo", "null? list ${it.messages}")
+            adapter.setList(it.messages)
             binding.rcView.layoutManager = LinearLayoutManager(requireContext())
             binding.rcView.adapter = adapter
             binding.rcView.scrollToPosition(adapter.itemCount - 1)
@@ -60,19 +56,14 @@ class SavedFragment : Fragment() {
 
 
         binding.bSend.setOnClickListener {
-            val massage = binding.editTextText.text.toString()
+            val message = binding.editTextText.text.toString()
             binding.editTextText.text.clear()
-            viewModel.sentMassage(massage = massage, chatId = chatId, typeOfChat = TYPE_TO_DO, userCode = clickedUser)
+            viewModel.sendMessage(messageText = message, chatId = chatId)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.destroy()
     }
 }

@@ -7,6 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.chatfirebase.R
 import com.example.chatfirebase.databinding.FragmentSettingsBinding
 import com.example.chatfirebase.ui.registration.SignInAct
 
@@ -15,15 +18,7 @@ class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
-    companion object {
-        fun newInstance() = SettingsFragment()
-    }
-
     private val viewModel: SettingsViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +38,18 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
             requireActivity().finish()
         }
+
+        viewModel.user.observe(requireActivity()){
+            binding.tvName.text = it.name
+
+            Glide.with(requireContext())
+                .load(it.image)
+                .error(R.drawable.user_default)
+                .apply(RequestOptions.circleCropTransform())
+                .into(binding.imUser)
+        }
+
+
     }
 
     override fun onDestroyView() {

@@ -28,4 +28,9 @@
 
     <!-- Strings used for fragments for navigation -->
     <string name="add_new_grope_edit_t">Write name of new grope</string>
+    <string name="title_activity_chat2">ChatActivity2</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
 </resources>

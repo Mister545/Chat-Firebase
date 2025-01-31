@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class MassageModel(
+data class MessageModel(
     val nameMassageUid: String? = "",
     val massage: String? = "",
     val image: String? = "",

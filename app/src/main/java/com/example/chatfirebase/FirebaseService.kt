@@ -2,8 +2,6 @@ package com.example.chatfirebase
 
 import android.net.Uri
 import android.util.Log
-import android.view.View
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -12,6 +10,9 @@ import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class FirebaseService {
 
@@ -29,6 +30,17 @@ class FirebaseService {
         }
     }
 
+    fun updateMessageText(chatId: String, messageId: String, newText: String) {
+        val messageRef = database.getReference("chats").child(chatId).child("messages").child(messageId)
+        messageRef.child("text").setValue(newText)
+    }
+
+    fun deleteMessageFromChat(chatId: String, messageId: String) {
+        val messageRef = database.getReference("chats").child(chatId).child("messages").child(messageId)
+        messageRef.removeValue()
+    }
+
+
     fun removeUsersListener() {
         val databaseReference = database.getReference("users")
         valueEventListener?.let {
@@ -38,13 +50,13 @@ class FirebaseService {
     }
 
 
-    fun listenerMassage(room: String, callback: (MassageModel) -> Unit) {
+    fun listenerMassage(room: String, callback: (MessageModel) -> Unit) {
         val database = FirebaseDatabase.getInstance()
         val chatRef = database.getReference("chats/$room/massages")
 
         chatRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val newMessage = snapshot.getValue(MassageModel::class.java)
+                val newMessage = snapshot.getValue(MessageModel::class.java)
                 Log.d("ooo", "newMassage ========== $newMessage")
 
                 if (newMessage != null) {
@@ -95,7 +107,6 @@ class FirebaseService {
     }
 
     fun setChat(chat: ChatModel, chatId: String) {
-
         val databaseReference = database.getReference("chats/$chatId")
         databaseReference.setValue(chat)
     }
@@ -138,6 +149,55 @@ class FirebaseService {
         callback(uploadTask)
     }
 
+
+    suspend fun getMessagesAsync(chatId: String): List<MessageModel> {
+        return suspendCancellableCoroutine { continuation ->
+            getEventMassages(chatId) { messages ->
+                if (continuation.isActive) {
+                    continuation.resume(messages)
+                }
+            }
+        }
+    }
+
+
+    suspend fun getChatAsync(chatId: String): ChatModel = suspendCancellableCoroutine { continuation ->
+        val databaseReference = database.getReference("chats/$chatId")
+        databaseReference
+            .get()
+            .addOnSuccessListener { dataSnapshot ->
+                val chat = dataSnapshot.getValue(ChatModel::class.java)
+                if (chat != null) {
+                    continuation.resume(chat)
+                } else {
+                    continuation.resumeWithException(Exception("Chat not found"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                continuation.resumeWithException(exception)
+            }
+    }
+
+
+    suspend fun getUserAsync(userId: String): UserModel = suspendCancellableCoroutine { continuation ->
+        val databaseReference = database.getReference("users/$userId")
+
+        databaseReference.get()
+            .addOnSuccessListener { dataSnapshot ->
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                if (user != null) {
+                    continuation.resume(user)
+                } else {
+                    continuation.resumeWithException(Exception("User not found"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                continuation.resumeWithException(exception)
+            }
+    }
+
+
+
     fun getImage(uid: String, callback: (String) -> Unit) {
         val databaseReference = database.getReference("images/$uid")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -160,6 +220,14 @@ class FirebaseService {
             }
         })
     }
+
+    suspend fun sendMessageAsync(chatId: String, message: MessageModel, size: Int) {
+        val chatRef = FirebaseDatabase.getInstance().getReference("chats").child(chatId)
+            .child("massages")
+
+        chatRef.child(size.toString()).setValue(message)
+    }
+
 
     fun getAllChats(callback: (Boolean, HashMap<String, ChatModel>) -> Unit) {
         val databaseReference = database.getReference("chats")
@@ -280,21 +348,21 @@ class FirebaseService {
         })
     }
 
-    fun getEventMassages(chatId: String, callback: (MutableList<MassageModel>) -> Unit) {
+    fun getEventMassages(chatId: String, callback: (MutableList<MessageModel>) -> Unit) {
         val databaseReference = database.getReference("chats/$chatId/massages")
         valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    callback(mutableListOf(MassageModel("", "", "")))
+                    callback(mutableListOf(MessageModel("", "", "")))
                 } else {
                     val genericTypeIndicator =
-                        object : GenericTypeIndicator<MutableList<MassageModel>>() {}
-                    val chat: MutableList<MassageModel>? =
+                        object : GenericTypeIndicator<MutableList<MessageModel>>() {}
+                    val chat: MutableList<MessageModel>? =
                         dataSnapshot.getValue(genericTypeIndicator)
                     if (chat != null) {
                         callback(chat)
                     } else {
-                        callback(mutableListOf(MassageModel()))
+                        callback(mutableListOf(MessageModel()))
                     }
                 }
             }

@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
 
                                 val massages = chat.massages
                                 massages.add(
-                                    MassageModel(
+                                    MessageModel(
                                         auth.currentUser!!.uid,
                                         text,
                                         users[auth.currentUser!!.uid]!!.image,

@@ -1,199 +1,187 @@
 package com.example.chatfirebase.ui.chat
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.chatfirebase.ChatModel
 import com.example.chatfirebase.DataTimeHelper
 import com.example.chatfirebase.FirebaseService
-import com.example.chatfirebase.MassageModel
-import com.example.chatfirebase.TYPE_CHAT
-import com.example.chatfirebase.TYPE_GROUP
+import com.example.chatfirebase.MessageModel
 import com.example.chatfirebase.TYPE_TO_DO
 import com.example.chatfirebase.UserModel
+import com.example.chatfirebase.ui.ChatState
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
-class ChatViewModel : ViewModel() {
-
-    private val firebaseService = FirebaseService()
-    val group: MutableLiveData<ChatModel> = MutableLiveData()
-    var partner: MutableLiveData<UserModel> = MutableLiveData()
-    var listChat: MutableLiveData<
-            MutableList<MassageModel>> = MutableLiveData<MutableList<MassageModel>>()
+class ChatViewModel(private val firebaseService: FirebaseService) : ViewModel() {
+    val state = MutableLiveData<ChatState>().apply { value = ChatState() }
     private val uid = FirebaseAuth.getInstance().uid
 
-    private fun getMassagesWithChatCode(chatId: String) {
-
-        Log.d("ooo", "uid $uid")
-        firebaseService.getEventMassages(chatId) { massages ->
-            if (massages.size == 1 && massages[0].time.isNullOrEmpty())
-                Log.d("ooo", "massages is empty")
-            else
-                listChat.value = massages
-
-            Log.d("ooo", "massages is $massages")
-
-        }
-    }
-
-    private fun getMassagesWithUserCode() {
-        listChat.value = mutableListOf()
-    }
-
-    fun sentMassage(massage: String, typeOfChat: String?, chatId: String?, userCode: String?) {
-        if (!chatId.isNullOrEmpty()) {
-            sentMassageWithChatCode(massage, chatId)
-        } else if (!userCode.isNullOrEmpty()) {
-            sentMassageWithUserCode(massage, userCode)
-        } else if (typeOfChat == TYPE_TO_DO) {
-            Log.d("ooo", "chat cod ${chatId}")
-            ///toDo chat
-            FirebaseService().getUser(FirebaseAuth.getInstance().uid!!) {
-                val codeSaved = it.chats!!.filter { it.length == 4 }
-                Log.d("ooo", "chat cod ${codeSaved[0]}")
-
-                sentMassageWithChatCode(massage, codeSaved[0])
-            }
-        }
-    }
-
-    private fun sentMassageWithChatCode(massage: String, chatId: String) {
-        val currentTime = DataTimeHelper().getIsoUtcFormat()
-
-        firebaseService.getChat(chatId) { chat ->
-            chat.massages.add(
-                MassageModel(
-                    uid,
-                    massage,
-                    image = "",
-                    currentTime
-                )
-            )
-
-            firebaseService.setChat(
-                ChatModel(
-                    chat.participants,
-                    chat.massages,
-                    massage,
-                    currentTime,
-                    chat.typeOfChat,
-                    chat.imageOfGroup,
-                    chat.nameOfGroup
-                ), chatId
-            )
-        }
-    }
-
-    private fun sentMassageWithUserCode(massage: String, userCode: String) {
-        val currentTime = DataTimeHelper().getIsoUtcFormat()
-
-        val chatId = addNewChat(massage = massage, user = userCode, currentTime = currentTime)
-        getMassagesWithChatCode(chatId)
-    }
-
-
-    private fun getPartner(chatModel: ChatModel) {
-        val partnerUId = chatModel.participants.filter { it != uid }
-        firebaseService.getUser(partnerUId[0]) {
-            partner.value = it
-        }
-    }
-
-    private fun getGroup(chatModel: ChatModel) {
-        group.value = chatModel
-    }
-
-    private fun getChatData(chatId: String, type: String) {
-        firebaseService.getChat(chatId) {
-            Log.d("ooo", "typeeeeeeeeeeeeeeeeeeee $type")
-
-            if (type == TYPE_GROUP) {
-                getGroup(it)
-            } else {
-                getPartner(it)
-            }
-        }
-    }
-
-    private fun getPartnerWithUserCode(userCode: String) {
-        firebaseService.getUser(userCode) {
-            partner.value = it
-        }
-    }
-
     fun start(chatId: String?, clickedUser: String?) {
-        Log.d("ooo", "chatId $chatId click User $clickedUser")
-        if (!chatId.isNullOrEmpty()) {
-            firebaseService.getChat(chatId) {
-                    getChatData(chatId, it.typeOfChat)
-                    getMassagesWithChatCode(chatId)
-            }
-        } else if (!clickedUser.isNullOrEmpty()) {
-            getPartnerWithUserCode(clickedUser)             //// add new chat
-            getMassagesWithUserCode()
-        } else {
-            FirebaseService().getUser(FirebaseAuth.getInstance().uid!!) { it ->
-                val codeSaved = it.chats!!.filter { it.length == 4 }
-                Log.d("ooo", "chat cod ${codeSaved[0]}")      ///toDo chat
-                getMassagesWithChatCode(codeSaved[0])
-            }
+        when {
+            !chatId.isNullOrEmpty() -> handleExistingChat(chatId)
+            !clickedUser.isNullOrEmpty() -> handleNewChat(clickedUser)
+            else -> handleToDoChat()
         }
     }
 
-    private fun addNewChat(user: String, massage: String, currentTime: String): String {
-        val randomCode = (100000..999999).random().toString()
-        val chatModel = ChatModel(
-            participants = mutableListOf(uid!!, user),
-            massages = mutableListOf(
-                MassageModel(
-                    uid,
-                    massage,
-                    "",
-                    currentTime
+    fun sendMessage(chatId: String, messageText: String) {
+        if (messageText.isBlank()) {
+            state.value = state.value?.copy(error = "Повідомлення не може бути порожнім")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val chatId2 = chatId.ifEmpty { getTodoChatId() }
+
+                state.value = state.value?.copy(isLoading = true)
+
+                // Створюємо об'єкт повідомлення
+                val message = MessageModel(
+                    nameMassageUid = uid!!,
+                    massage = messageText,
+                    time = DataTimeHelper().getIsoUtcFormat()
                 )
-            ),
-            typeOfChat = TYPE_CHAT,
-            lastMassage = massage,
-            lastTime = currentTime
-        )
-        firebaseService.setChat(chatModel, randomCode)
 
-        firebaseService.getUserSingleTime(uid) {
-            val arr = mutableListOf<String>()  // Список
-            val chatsToAdd: MutableList<String> = it.chats ?: mutableListOf()
-            arr.addAll(chatsToAdd)
-            arr.add(randomCode)
+                // Відправляємо повідомлення через FirebaseService
+                firebaseService.sendMessageAsync(chatId2, message, state.value?.messages?.size ?: 0)
 
-            firebaseService.setUserState(
-                userModel =
-                UserModel(
-                    arr,
-                    name = it.name,
-                    email = it.email,
-                    image = it.image
-                ), uid
-            )
+                // Оновлюємо список повідомлень
+                val updatedMessages = firebaseService.getMessagesAsync(chatId2)
+                state.value = state.value?.copy(messages = updatedMessages, isLoading = false)
+            } catch (e: Exception) {
+                // У разі помилки оновлюємо стан із повідомленням про помилку
+                state.value = state.value?.copy(isLoading = false, error = e.message)
+            }
         }
-        firebaseService.getUserSingleTime(user) {
-            val arr = mutableListOf<String>()
-            val chatsToAdd: MutableList<String> = it.chats ?: mutableListOf()
-            arr.addAll(chatsToAdd)
-            arr.add(randomCode)
-
-            firebaseService.setUserState(
-                userModel =
-                UserModel(
-                    arr,
-                    name = it.name,
-                    email = it.email,
-                    image = it.image
-                ), user
-            )
-        }
-        return randomCode
     }
 
-    fun destroy(){
-        firebaseService.removeChatsListener()
+    private fun handleExistingChat(chatId: String) {
+        state.value = state.value?.copy(isLoading = true)
+
+        viewModelScope.launch {
+            try {
+                val chat = firebaseService.getChatAsync(chatId)
+                val partner = getPartnerAsync(chat)
+                val partners = getPartnersAsync(chat)
+
+                state.value = state.value?.copy(
+                    chatType = chat,
+                    partner = partner,
+                    partners = partners,
+                    isLoading = false
+                )
+
+                firebaseService.getEventMassages(chatId) { messages ->
+                    state.postValue(state.value?.copy(messages = messages))
+                }
+                Log.d("ooo", "state - ${state.value}")
+
+            } catch (e: Exception) {
+                state.value = state.value?.copy(isLoading = false, error = e.message)
+            }
+        }
     }
+
+    private fun handleNewChat(clickedUser: String) {
+        state.value = state.value?.copy(isLoading = true)
+
+        viewModelScope.launch {
+            try {
+                val partner = firebaseService.getUserAsync(clickedUser)
+                state.value = state.value?.copy(partner = partner, isLoading = false)
+            } catch (e: Exception) {
+                state.value = state.value?.copy(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    private fun handleToDoChat() {
+        state.value = state.value?.copy(isLoading = true)
+
+        viewModelScope.launch {
+            try {
+                val user = firebaseService.getUserAsync(uid!!)
+                val toDoChats = user.chats?.filter { it.length == 4 } ?: emptyList()
+                if (toDoChats.isNotEmpty()) {
+                    val messages = firebaseService.getMessagesAsync(toDoChats[0])
+                    state.value = state.value?.copy(messages = messages, isLoading = false)
+                } else {
+                    state.value = state.value?.copy(isLoading = false, error = "Чатів типу 'to-do' не знайдено")
+                }
+            } catch (e: Exception) {
+                state.value = state.value?.copy(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    private suspend fun getPartnerAsync(chat: ChatModel): UserModel {
+        val partnerId = chat.participants.first { it != uid }
+        return firebaseService.getUserAsync(partnerId)
+    }
+
+    private suspend fun getPartnersAsync(chat: ChatModel): Map<String, UserModel> = coroutineScope {
+        chat.participants
+            .associateWith { participantId ->
+                async { firebaseService.getUserAsync(participantId) } // Запускаємо асинхронний запит
+            }
+            .mapValues { it.value.await() } // Очікуємо результати всіх запитів
+    }
+
+
+    private suspend fun getTodoChatId(): String = coroutineScope {
+        async {
+            firebaseService.getUserAsync(uid!!).chats?.firstOrNull { code ->
+                firebaseService.getChatAsync(code).typeOfChat == TYPE_TO_DO
+            } ?: ""
+        }.await()
+    }
+
+    fun deleteUserFromGrope(clickedItem: Item, items: ArrayList<Item>, chatId: String){
+        viewModelScope.launch{
+            val deletedUser = firebaseService.getUserAsync(clickedItem.userUid)
+            deletedUser.chats!!.remove(chatId)
+            firebaseService.setUserState(deletedUser, clickedItem.userUid)
+
+            val chat = firebaseService.getChatAsync(chatId)
+            chat.participants.remove(clickedItem.userUid)
+            firebaseService.setChat(chat, chatId)
+
+            start(chatId, "")
+        }
+    }
+
+    fun changeNameOfGrope(chatId: String, nameOfGrope: String) {
+        viewModelScope.launch {
+            val chat = firebaseService.getChatAsync(chatId)
+            chat.nameOfGroup = nameOfGrope
+            firebaseService.setChat(chat, chatId)
+            start(chatId, "")
+        }
+    }
+
+    fun changeImageOfGrope(chatId: String, uri: Uri) {
+        viewModelScope.launch {
+            val chat = firebaseService.getChatAsync(chatId)
+            chat.imageOfGroup = uri.toString()
+            firebaseService.setChat(chat, chatId)
+            start(chatId, "")
+        }
+    }
+
+    fun editMessage(chatId: String, messageId: String, newText: String) {
+        firebaseService.updateMessageText(chatId, messageId, newText)
+    }
+
+    fun deleteMessage(chatId: String, messageId: String) {
+        firebaseService.deleteMessageFromChat(chatId, messageId)
+    }
+
+
 }

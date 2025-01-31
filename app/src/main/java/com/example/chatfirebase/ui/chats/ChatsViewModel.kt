@@ -3,102 +3,94 @@ package com.example.chatfirebase.ui.chats
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.chatfirebase.ChatModel
 import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.RcView.ModelChat
 import com.example.chatfirebase.TYPE_TO_DO
 import com.example.chatfirebase.UserModel
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class ChatsViewModel : ViewModel() {
 
-    val firebaseService = FirebaseService()
+    private val firebaseService = FirebaseService()
     val me: MutableLiveData<UserModel> = MutableLiveData()
     val uid = FirebaseAuth.getInstance().uid
-    var listChats: MutableLiveData<MutableList<ModelChat>> =
-        MutableLiveData<MutableList<ModelChat>>()
+    val listChats: MutableLiveData<List<ModelChat>?> = MutableLiveData()
+    val isLoading: MutableLiveData<Boolean> = MutableLiveData()
 
     fun chatsInit() {
-        getMyListChatsFromBd { chats ->
-            chats.forEach { chat ->
-                getUserModels(chat.value.participants) { arrayUserModels ->
-                    val list: MutableList<ModelChat> = mutableListOf()
-                    list.add(
-                        ModelChat(
-                            codeChat = chat.key,
-                            nameOfGroup = chat.value.nameOfGroup,
-                            imageOfGroup = chat.value.imageOfGroup,
-                            names = arrayUserModels,
-                            lastTime = chat.value.lastTime,
-                            lastMassage = chat.value.lastMassage,
-                            typeOfChat = chat.value.typeOfChat
-                        )
-                    )
-                    Log.d("ooo", "listCHATS from bd ${chats.size}")
-                    Log.d("ooo", "user models array ${arrayUserModels}")
-                    Log.d("ooo", "listCHATS ${list.size}")
-                    Log.d("ooo", "listCHATS ${list.size}")
-                    listChats.value = list
-                }
-            }
+        if (uid != null) {
+            getMyListChatsFromBd()
+            getMyUserModel()
+        } else {
+            Log.e("ChatsViewModel", "User ID is null")
         }
-        getMyUserModel()
-    }
-
-    fun destroy(){
-        firebaseService.removeChatsListener()
     }
 
     private fun getMyUserModel() {
-        firebaseService.getUser(uid!!) {
-            me.value = it
-        }
-    }
-
-    private fun getUserModels(
-        participants: MutableList<String>,
-        callback: (ArrayList<UserModel>) -> Unit
-    ) {
-        val listUserModelsWithoutPhotoCheck = arrayListOf<UserModel>()
-
-        var listUserModels = arrayListOf<UserModel>()
-
-        participants.forEach { userId ->
-            firebaseService.getUser(userId) { user ->
-                listUserModelsWithoutPhotoCheck.add(user)
-
-                if (listUserModelsWithoutPhotoCheck.size == participants.size) {
-                    listUserModels = checkPhotoInProfile(listUserModelsWithoutPhotoCheck)
-                    callback(listUserModels)
-                }
+        viewModelScope.launch {
+            isLoading.value = true
+            try {
+                val user = firebaseService.getUserAsync(uid!!)
+                me.value = user
+            } catch (e: Exception) {
+                Log.e("ChatsViewModel", "Error fetching user model: ${e.message}")
+            } finally {
+                isLoading.value = false
             }
         }
     }
 
-    private fun checkPhotoInProfile(listUserModelsWithoutPhotoCheck: ArrayList<UserModel>): ArrayList<UserModel> {
+    private fun getMyListChatsFromBd() {
+        viewModelScope.launch {
+            isLoading.value = true
+            try {
+                val user = firebaseService.getUserAsync(uid!!)
+                val listChatsC = mutableListOf<ModelChat>()
 
-        val result = arrayListOf<UserModel>()
-        listUserModelsWithoutPhotoCheck.forEach {
-            if (it.image == "")
-                it.image = "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
-            result.add(it)
-        }
-        return result
-    }
-
-    private fun getMyListChatsFromBd(callback: (Map<String, ChatModel>) -> Unit) {
-        firebaseService.getUser(uid!!) { me ->
-            val listChats: MutableMap<String, ChatModel> = mutableMapOf()
-            if (!me.chats.isNullOrEmpty()) {
-                me.chats!!.forEach { chatCode ->
-                    firebaseService.getChat(chatCode) {
-                        if (it.typeOfChat != TYPE_TO_DO) {
-                            listChats[chatCode] = it
-                            callback(listChats)
-                        }
+                user.chats?.forEach { chatCode ->
+                    val chat = firebaseService.getChatAsync(chatCode)
+                    if (chat.typeOfChat != TYPE_TO_DO) {
+                        val userModels = getUserModels(chat.participants)
+                        listChatsC.add(
+                            ModelChat(
+                                codeChat = chatCode,
+                                nameOfGroup = chat.nameOfGroup,
+                                imageOfGroup = chat.imageOfGroup,
+                                names = userModels as ArrayList,
+                                lastTime = chat.lastTime,
+                                lastMassage = chat.lastMassage,
+                                typeOfChat = chat.typeOfChat
+                            )
+                        )
                     }
                 }
+
+                listChats.value = listChatsC
+            } catch (e: Exception) {
+                Log.e("ChatsViewModel", "Error fetching chats: ${e.message}")
+            } finally {
+                isLoading.value = false
             }
+        }
+    }
+
+    private suspend fun getUserModels(participants: List<String>): List<UserModel> {
+        val userModels = participants.map { userId ->
+            firebaseService.getUserAsync(userId)
+        }
+
+        return checkPhotoInProfile(userModels)
+    }
+
+    private fun checkPhotoInProfile(users: List<UserModel>): List<UserModel> {
+        return users.map {
+            if (it.image.isBlank()) {
+                it.image = "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+            }
+            it
         }
     }
 
@@ -106,4 +98,3 @@ class ChatsViewModel : ViewModel() {
         return FirebaseAuth.getInstance().currentUser != null
     }
 }
-

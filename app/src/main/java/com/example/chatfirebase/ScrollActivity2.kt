@@ -55,7 +55,6 @@ class ScrollActivity2 : AppCompatActivity() {
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_scroll2)
 
-        val header = navView.getHeaderView(R.id.navHeaderScroll2)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_profile,

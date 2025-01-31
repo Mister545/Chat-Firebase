@@ -23,11 +23,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatsFragment : Fragment(), ChatAdapter.OnItemClickListener {
 
-
-    companion object {
-        fun newInstance() = ChatsFragment()
-    }
-
     private val viewModel: ChatsViewModel by viewModels()
 
     private val adapterChat = ChatAdapter(this)
@@ -50,8 +45,12 @@ class ChatsFragment : Fragment(), ChatAdapter.OnItemClickListener {
         viewModel.chatsInit()
 
         viewModel.listChats.observe(requireActivity()) {
-            Log.d("ooo", "ддддддддд ${it.size}")
+            Log.d("ooo", "ддддддддд ${it!!.size}")
             adapterChat.updateAdapter(it, viewModel.me.value!!.name)
+        }
+
+        viewModel.isLoading.observe(requireActivity()) {
+            initProgressBar(it)
         }
 
         binding.rcView.layoutManager = LinearLayoutManager(requireContext())
@@ -107,9 +106,11 @@ class ChatsFragment : Fragment(), ChatAdapter.OnItemClickListener {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.destroy()
+    private fun initProgressBar(loading: Boolean){
+        when (loading) {
+            true -> binding.animEmpty.visibility = View.VISIBLE
+            false -> binding.animEmpty.visibility = View.GONE
+        }
     }
 }
 

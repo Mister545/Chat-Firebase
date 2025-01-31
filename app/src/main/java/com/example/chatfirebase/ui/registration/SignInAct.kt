@@ -8,11 +8,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.MutableLiveData
 import com.example.chatfirebase.ChatModel
 import com.example.chatfirebase.DataTimeHelper
 import com.example.chatfirebase.FirebaseService
-import com.example.chatfirebase.MassageModel
+import com.example.chatfirebase.MessageModel
 import com.example.chatfirebase.R
 import com.example.chatfirebase.ScrollActivity
 import com.example.chatfirebase.TYPE_TO_DO
@@ -133,7 +132,7 @@ class SignInAct : AppCompatActivity() {
 
         firebaseService.setChat(ChatModel(participants = mutableListOf(user.uid),
             massages = mutableListOf(
-                MassageModel(user.uid, "Hi I am your todo chat", "", time = DataTimeHelper().getIsoUtcFormat())),
+                MessageModel(user.uid, "Hi I am your todo chat", "", time = DataTimeHelper().getIsoUtcFormat())),
             typeOfChat = TYPE_TO_DO, lastMassage = " ", lastTime = DataTimeHelper().getIsoUtcFormat()), chatId = randomCodeForTodoChat)
     }
 
