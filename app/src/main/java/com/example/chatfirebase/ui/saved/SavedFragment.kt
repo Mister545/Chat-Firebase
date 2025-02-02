@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.chatfirebase.DialogHelper
 import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.RcMassage
 import com.example.chatfirebase.databinding.FragmentSavedBinding
@@ -23,7 +24,6 @@ class SavedFragment : Fragment() {
             ChatViewModelFactory(FirebaseService())
         )[ChatViewModel::class.java]
     }
-    val adapter = RcMassage()
     private var _binding: FragmentSavedBinding? = null
     private val binding get() = _binding!!
 
@@ -48,6 +48,16 @@ class SavedFragment : Fragment() {
 
         viewModel.state.observe(viewLifecycleOwner) {
             Log.d("ooo", "null? list ${it.messages}")
+            val adapter = RcMassage(
+                onEdit = {message ->
+                    DialogHelper().showInputDialog(requireContext(), message.second.message!!){
+                        viewModel.editMessage(chatId = chatId, newText = it, messageId = message.first)
+                    }
+                },
+                onDelete = {message ->
+                    viewModel.deleteMessage(chatId = chatId, messageId = message.first)
+                }
+            )
             adapter.setList(it.messages)
             binding.rcView.layoutManager = LinearLayoutManager(requireContext())
             binding.rcView.adapter = adapter
@@ -58,7 +68,7 @@ class SavedFragment : Fragment() {
         binding.bSend.setOnClickListener {
             val message = binding.editTextText.text.toString()
             binding.editTextText.text.clear()
-            viewModel.sendMessage(messageText = message, chatId = chatId)
+            viewModel.sendMessage(newUserId = "", messageText = message, chatId = chatId)
         }
     }
 

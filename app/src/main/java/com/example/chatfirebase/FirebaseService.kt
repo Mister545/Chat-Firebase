@@ -11,6 +11,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -31,15 +32,38 @@ class FirebaseService {
     }
 
     fun updateMessageText(chatId: String, messageId: String, newText: String) {
-        val messageRef = database.getReference("chats").child(chatId).child("messages").child(messageId)
-        messageRef.child("text").setValue(newText)
+        val messageRef =
+            database.getReference("chats").child(chatId).child("messages").child(messageId)
+        messageRef.child("message").setValue(newText)
+        messageRef.child("lastMassage").setValue("$newText was edited")
     }
 
     fun deleteMessageFromChat(chatId: String, messageId: String) {
-        val messageRef = database.getReference("chats").child(chatId).child("messages").child(messageId)
+        val messageRef =
+            database.getReference("chats").child(chatId).child("messages").child(messageId)
         messageRef.removeValue()
     }
 
+    suspend fun createNewConversation(
+        chatId: String,
+        newUserId: String,
+        uid: String,
+        message: MessageModel
+    ) {
+        val chatModel = ChatModel(
+            participants = mutableListOf(uid, newUserId),
+            messages = arrayListOf(message),
+            lastMassage = message.message!!, lastTime = DataTimeHelper().getIsoUtcFormat(),
+            typeOfChat = TYPE_CHAT, imageOfGroup = "", nameOfGroup = ""
+        )
+        setChat(chatId = chatId, chat = chatModel)
+        val me = getUserAsync(uid)
+        me.chats!!.add(chatId)
+        setUserState(userUid = uid, userModel = me)
+        val otherUser = getUserAsync(newUserId)
+        otherUser.chats!!.add(chatId)
+        setUserState(userUid = newUserId, userModel = otherUser)
+    }
 
     fun removeUsersListener() {
         val databaseReference = database.getReference("users")
@@ -52,7 +76,7 @@ class FirebaseService {
 
     fun listenerMassage(room: String, callback: (MessageModel) -> Unit) {
         val database = FirebaseDatabase.getInstance()
-        val chatRef = database.getReference("chats/$room/massages")
+        val chatRef = database.getReference("chats/$room/messages")
 
         chatRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -85,7 +109,7 @@ class FirebaseService {
 
     fun setUserState(userModel: UserModel, userUid: String, callback: (Boolean) -> Unit) {
         val databaseReference = database.getReference("users/$userUid")
-        databaseReference.setValue(userModel).addOnCompleteListener{
+        databaseReference.setValue(userModel).addOnCompleteListener {
             callback(it.isSuccessful)
         }
     }
@@ -117,7 +141,7 @@ class FirebaseService {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.getValue(ChatModel::class.java) == null) {
                     callback(
-                        ChatModel(mutableListOf(), mutableListOf())
+                        ChatModel(mutableListOf(), arrayListOf())
                     )
                 } else {
                     val chat = dataSnapshot.getValue(ChatModel::class.java)!!
@@ -150,7 +174,7 @@ class FirebaseService {
     }
 
 
-    suspend fun getMessagesAsync(chatId: String): List<MessageModel> {
+    suspend fun getMessagesAsync(chatId: String): ArrayList<Pair<String, MessageModel>> {
         return suspendCancellableCoroutine { continuation ->
             getEventMassages(chatId) { messages ->
                 if (continuation.isActive) {
@@ -161,41 +185,42 @@ class FirebaseService {
     }
 
 
-    suspend fun getChatAsync(chatId: String): ChatModel = suspendCancellableCoroutine { continuation ->
-        val databaseReference = database.getReference("chats/$chatId")
-        databaseReference
-            .get()
-            .addOnSuccessListener { dataSnapshot ->
-                val chat = dataSnapshot.getValue(ChatModel::class.java)
-                if (chat != null) {
-                    continuation.resume(chat)
-                } else {
-                    continuation.resumeWithException(Exception("Chat not found"))
+    suspend fun getChatAsync(chatId: String): ChatModel =
+        suspendCancellableCoroutine { continuation ->
+            val databaseReference = database.getReference("chats/$chatId")
+            databaseReference
+                .get()
+                .addOnSuccessListener { dataSnapshot ->
+                    val chat = dataSnapshot.getValue(ChatModel::class.java)
+                    if (chat != null) {
+                        continuation.resume(chat)
+                    } else {
+                        continuation.resumeWithException(Exception("Chat not found"))
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                continuation.resumeWithException(exception)
-            }
-    }
-
-
-    suspend fun getUserAsync(userId: String): UserModel = suspendCancellableCoroutine { continuation ->
-        val databaseReference = database.getReference("users/$userId")
-
-        databaseReference.get()
-            .addOnSuccessListener { dataSnapshot ->
-                val user = dataSnapshot.getValue(UserModel::class.java)
-                if (user != null) {
-                    continuation.resume(user)
-                } else {
-                    continuation.resumeWithException(Exception("User not found"))
+                .addOnFailureListener { exception ->
+                    continuation.resumeWithException(exception)
                 }
-            }
-            .addOnFailureListener { exception ->
-                continuation.resumeWithException(exception)
-            }
-    }
+        }
 
+
+    suspend fun getUserAsync(userId: String): UserModel =
+        suspendCancellableCoroutine { continuation ->
+            val databaseReference = database.getReference("users/$userId")
+
+            databaseReference.get()
+                .addOnSuccessListener { dataSnapshot ->
+                    val user = dataSnapshot.getValue(UserModel::class.java)
+                    if (user != null) {
+                        continuation.resume(user)
+                    } else {
+                        continuation.resumeWithException(Exception("User not found"))
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    continuation.resumeWithException(exception)
+                }
+        }
 
 
     fun getImage(uid: String, callback: (String) -> Unit) {
@@ -221,12 +246,22 @@ class FirebaseService {
         })
     }
 
-    suspend fun sendMessageAsync(chatId: String, message: MessageModel, size: Int) {
-        val chatRef = FirebaseDatabase.getInstance().getReference("chats").child(chatId)
-            .child("massages")
+    suspend fun sendMessageListAsync(chatId: String, messageList: ArrayList<Pair<String, MessageModel>>) {
+        val chatRef = FirebaseDatabase.getInstance()
+            .getReference("chats").child(chatId)
+            .child("messages")
 
-        chatRef.child(size.toString()).setValue(message)
+        // Перетворюємо список Pair у Map
+        val messageMap = messageList.associate { it.first to it.second }
+
+        try {
+            chatRef.setValue(messageMap).await()
+            Log.d("ooo", "Messages sent successfully")
+        } catch (e: Exception) {
+            Log.e("ooo", "Failed to send messages", e)
+        }
     }
+
 
 
     fun getAllChats(callback: (Boolean, HashMap<String, ChatModel>) -> Unit) {
@@ -348,23 +383,27 @@ class FirebaseService {
         })
     }
 
-    fun getEventMassages(chatId: String, callback: (MutableList<MessageModel>) -> Unit) {
-        val databaseReference = database.getReference("chats/$chatId/massages")
+    fun getEventMassages(chatId: String, callback: (ArrayList<Pair<String, MessageModel>>) -> Unit) {
+        val databaseReference = database.getReference("chats/$chatId/messages")
         valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    callback(mutableListOf(MessageModel("", "", "")))
-                } else {
-                    val genericTypeIndicator =
-                        object : GenericTypeIndicator<MutableList<MessageModel>>() {}
-                    val chat: MutableList<MessageModel>? =
-                        dataSnapshot.getValue(genericTypeIndicator)
-                    if (chat != null) {
-                        callback(chat)
-                    } else {
-                        callback(mutableListOf(MessageModel()))
+                val messagesList = arrayListOf<Pair<String, MessageModel>>()
+
+                for (messageSnapshot in dataSnapshot.children) {
+                    val key = messageSnapshot.key // Отримання ключа
+                    val message = messageSnapshot.getValue(MessageModel::class.java) // Отримання об'єкта
+
+                    if (key != null && message != null) {
+                        messagesList.add(Pair(key, message))
                     }
                 }
+
+                // Якщо повідомлення немає, передаємо список з пустим елементом
+                if (messagesList.isEmpty()) {
+                    messagesList.add(Pair("", MessageModel("", "", "")))
+                }
+
+                callback(messagesList)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -373,6 +412,7 @@ class FirebaseService {
         }
         databaseReference.addValueEventListener(valueEventListener!!)
     }
+
 
 
 }

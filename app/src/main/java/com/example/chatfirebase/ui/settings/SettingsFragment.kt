@@ -40,7 +40,7 @@ class SettingsFragment : Fragment() {
         }
 
         viewModel.user.observe(requireActivity()){
-            binding.tvName.text = it.name
+            _binding?.tvName?.text = it.name
 
             Glide.with(requireContext())
                 .load(it.image)

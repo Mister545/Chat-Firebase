@@ -131,8 +131,7 @@ class SignInAct : AppCompatActivity() {
         )
 
         firebaseService.setChat(ChatModel(participants = mutableListOf(user.uid),
-            massages = mutableListOf(
-                MessageModel(user.uid, "Hi I am your todo chat", "", time = DataTimeHelper().getIsoUtcFormat())),
+            messages = arrayListOf(MessageModel(user.uid, "Hi I am your todo chat", "", time = DataTimeHelper().getIsoUtcFormat())),
             typeOfChat = TYPE_TO_DO, lastMassage = " ", lastTime = DataTimeHelper().getIsoUtcFormat()), chatId = randomCodeForTodoChat)
     }
 

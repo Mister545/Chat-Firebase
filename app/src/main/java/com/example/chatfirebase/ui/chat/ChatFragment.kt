@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatfirebase.ChatModel
+import com.example.chatfirebase.DialogHelper
 import com.example.chatfirebase.FirebaseService
 import com.example.chatfirebase.MessageModel
 import com.example.chatfirebase.R
@@ -35,7 +36,6 @@ class ChatFragment : Fragment() {
             ChatViewModelFactory(FirebaseService())
         )[ChatViewModel::class.java]
     }
-    val adapter = RcMassage()
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
@@ -55,26 +55,39 @@ class ChatFragment : Fragment() {
         val clickedUser = arguments?.getString("clickedUser") // Отримуємо значення
         val type = arguments?.getString(TYPE_OF_CHAT) // Отримуємо значення
 
-        Log.d("ooo", "is to do in chat frag $type")
         viewModel.start(chatId = chatId, clickedUser = clickedUser)
 
         viewModel.state.observe(viewLifecycleOwner) {
-            initRcView(it.messages)
+            initRcView(it.messages, chatId)
+            Log.d("ooo", "messages in fragment event ${it.messages}")
         }
 
         binding.bSend.setOnClickListener {
             val message = binding.editTextText.text.toString()
             binding.editTextText.text.clear()
             viewModel.sendMessage(
+                newUserId = clickedUser,
                 messageText = message,
-                chatId = chatId!!
+                chatId = chatId
             )
+            viewModel.start(viewModel.chatId2.value, clickedUser)
         }
     }
 
-    private fun initRcView(list: List<MessageModel>) {
-        Log.d("ooo", "null? list ${list}")
-        adapter.setList(list)
+    private fun initRcView(messages: ArrayList<Pair<String, MessageModel>>, chatId: String?) {
+        val adapter = RcMassage(
+            onEdit = {message ->
+                Log.d("ooo" , "first second edit - ${message.first} ,, ${message.second} ,, code chat ${viewModel.chatId2.value!!}")
+                DialogHelper().showInputDialog(requireContext(), message.second.message!!){
+                    viewModel.editMessage(chatId = viewModel.chatId2.value!!, newText = it, messageId = message.first)
+                }
+            },
+            onDelete = {message ->
+                Log.d("ooo" , "first second delete - ${message.first} ,, ${message.second} ,, code chat ${viewModel.chatId2.value!!}")
+                viewModel.deleteMessage(chatId = viewModel.chatId2.value!!, messageId = message.first)
+            }
+        )
+        adapter.setList(messages)
         binding.rcView.layoutManager = LinearLayoutManager(requireContext())
         binding.rcView.adapter = adapter
         binding.rcView.scrollToPosition(adapter.itemCount - 1)
