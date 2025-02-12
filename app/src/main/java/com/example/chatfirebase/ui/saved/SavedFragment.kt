@@ -50,7 +50,7 @@ class SavedFragment : Fragment() {
             Log.d("ooo", "null? list ${it.messages}")
             val adapter = RcMassage(
                 onEdit = {message ->
-                    DialogHelper().showInputDialog(requireContext(), message.second.message!!){
+                    DialogHelper.showInputDialog(requireContext(), message.second.message!!){
                         viewModel.editMessage(chatId = chatId, newText = it, messageId = message.first)
                     }
                 },

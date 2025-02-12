@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date of birth"
+            android:text="@string/data_picker_date_of_birth"
             android:textSize="25sp"
             android:textColor="@color/white"
             android:layout_margin="10dp"/>
@@ -52,7 +52,7 @@
             android:id="@+id/save_data_birth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save"
+            android:text="@string/data_picker_save"
             android:layout_margin="12dp"
             android:textColor="@color/white"
             android:background="@drawable/button_date_picker">

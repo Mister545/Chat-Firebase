@@ -78,7 +78,7 @@ class ChatFragment : Fragment() {
         val adapter = RcMassage(
             onEdit = {message ->
                 Log.d("ooo" , "first second edit - ${message.first} ,, ${message.second} ,, code chat ${viewModel.chatId2.value!!}")
-                DialogHelper().showInputDialog(requireContext(), message.second.message!!){
+                DialogHelper.showInputDialog(requireContext(), message.second.message!!){
                     viewModel.editMessage(chatId = viewModel.chatId2.value!!, newText = it, messageId = message.first)
                 }
             },

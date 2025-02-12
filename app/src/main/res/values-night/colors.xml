@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="text_color">#ffffff</color>
+
+    <!--    Switch   -->
+    <color name="track_enabled">#FFA000</color> <!-- Оранжевий (увімкнено) -->
+    <color name="track_disabled">#CCCCCC</color> <!-- Сірий (вимкнено) -->
+    <color name="thumb_enabled">#FFFFFF</color> <!-- Білий кружок (увімкнено) -->
+    <color name="thumb_disabled">#666666</color> <!-- Темний кружок (вимкнено) -->
+
+    <!--    Act profile   -->
+    <color name="p_toolbar_nickname">#212D3B</color>
+    <color name="p_background">#151E25</color>
+    <color name="p_layout_background">#1D2733</color>
+    <color name="p_gray_text">#717B87</color>
+    <color name="p_button_photo">#61A9E0</color>
+    <color name="p_blue_text">#85B9E4</color>
+
+    <!--    Act edit profile   -->
+    <color name="p_ed_toolbar">#252D3A</color>
+    <color name="p_ed_background">#151E25</color>
+    <color name="p_ed_layout_background">#1D2733</color>
+    <color name="p_ed_gray_text">#717B87</color>
+    <color name="p_ed_blue_text">#85B9E4</color>
+    <color name="p_ed_red_text">#C16C74</color>
+
+    <!--    Driver layout  -->
+    <color name="nav_header_background">#233040</color>
+    <color name="drawer_background">#1C242F</color>
+
+    <!--    date picker   -->
+    <color name="date_picker_button">#61A9E0</color>
+    <color name="date_picker_layout_background">#212D3B</color>
+
+    <!--    scroll act   -->
+    <color name="scroll_toolbar">#252D3A</color>
+    <color name="scroll_fab">#60A2DE</color>
+
+    <!--    settings act   -->
+    <color name="settings_text_blue">#85B9E4</color>
+    <color name="settings_text_red">#C16C74</color>
+    <color name="settings_nickname">#212D3B</color>
+    <color name="settings_background">#151E25</color>
+    <color name="settings_layout_background">#1D2733</color>
+
+    <!--    new grope act   -->
+    <color name="new_grope_background">#1D2733</color>
+    <color name="new_grope_item_background">#C16C74</color>
+    <color name="new_grope_text_gray">#717B87</color>
+
+    <!--   add new grope act   -->
+    <color name="add_new_grope_background">#1D2733</color>
+    <color name="add_new_grope_item_background">#C16C74</color>
+    <color name="add_new_grope_text_gray">#717B87</color>
+
+
+</resources>

@@ -1,5 +1,6 @@
 package com.example.chatfirebase
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import com.google.android.material.snackbar.Snackbar
@@ -14,9 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.chatfirebase.databinding.ActivityScroll2Binding
 import android.content.Intent
+import android.content.SharedPreferences
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatfirebase.ui.addNewGrope.AddNewGrope
@@ -31,10 +34,11 @@ class ScrollActivity2 : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityScroll2Binding
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.setLocale(this, LocaleHelper.getSavedLanguage(this))
         super.onCreate(savedInstanceState)
-
         binding = ActivityScroll2Binding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -49,7 +53,9 @@ class ScrollActivity2 : AppCompatActivity() {
                 .setAnchorView(R.id.fabNewChat).show()
         }
 
-        setDataOnNavHeader()
+        sharedPreferences = getSharedPreferences("ThemePrefs", MODE_PRIVATE)
+        initThem()
+        initRegistration()
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -90,6 +96,19 @@ class ScrollActivity2 : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setDataOnNavHeader(binding.navView.getHeaderView(0))
+    }
+
+
+    private fun initRegistration() {
+        if (FirebaseAuth.getInstance().currentUser == null){
+            val intent = Intent(this, SignInAct::class.java)
+            startActivity(intent)
+        }
+    }
+
     private fun clickOnSavedListener(){
         FirebaseService().getUser(FirebaseAuth.getInstance().uid!!){
             val codeSaved = it.chats!!.filter { it.length == 4 }
@@ -122,24 +141,40 @@ class ScrollActivity2 : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun setDataOnNavHeader(){
+    private fun setDataOnNavHeader(headerView: View) {
         val firebaseService = FirebaseService()
-        val uid = FirebaseAuth.getInstance().uid
-        firebaseService.getUser(uid!!){
-            val name = findViewById<TextView>(R.id.nameNav)
-            val email = findViewById<TextView>(R.id.gmailNav)
-            val image = findViewById<ImageView>(R.id.imageView)
+        val uid = FirebaseAuth.getInstance().uid ?: return
 
-            name.text = it.name
-            email.text = it.email
-            if (it.image.isNotEmpty()) {
-                Glide.with(this)
+        firebaseService.getUser(uid) {
+            // Перевіряємо, чи Activity ще не знищена
+            if (!isDestroyed && !isFinishing) {
+                val name = headerView.findViewById<TextView>(R.id.nameNav)
+                val email = headerView.findViewById<TextView>(R.id.gmailNav)
+                val image = headerView.findViewById<ImageView>(R.id.imageView)
+
+                name.text = it.name
+                email.text = it.email
+
+                Glide.with(this@ScrollActivity2)
                     .load(it.image)
+                    .error(R.drawable.user_default)
                     .apply(RequestOptions.circleCropTransform())
                     .into(image)
-            } else {
-                image.setImageResource(R.drawable.user_default)
             }
+        }
+    }
+
+
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.updateResources(newBase, LocaleHelper.getSavedLanguage(newBase)))
+    }
+
+    private fun initThem() {
+        if (sharedPreferences.getBoolean("isDarkMode", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 }

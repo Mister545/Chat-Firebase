@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/p_ed_layout_background"
-                android:text="Your name"
+                android:text="@string/ed_your_name"
                 android:textColor="@color/p_ed_blue_text"
                 android:textSize="18sp" />
 
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Name"
+                android:hint="@string/ed_name"
                 android:inputType="text"
                 android:maxLength="10"
                 android:textColor="@color/white"
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/p_ed_layout_background"
                 android:ems="10"
-                android:hint="Second Name"
+                android:hint="@string/ed_second_name"
                 android:inputType="text"
                 android:maxLength="10"
                 android:textColor="@color/white"
@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:background="@color/p_ed_layout_background"
-                    android:text="About you"
+                    android:text="@string/ed_about_you"
                     android:textColor="@color/p_ed_blue_text"
                     android:textSize="15sp" />
 
@@ -107,7 +107,7 @@
                     android:background="@color/p_ed_layout_background"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="Type something about you...                                 70"
+                    android:hint="@string/ed_type_something"
                     android:inputType="text"
                     android:textColor="@color/white"
                     android:textColorHint="@color/p_ed_gray_text"
@@ -143,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:background="@color/p_ed_layout_background"
-                android:text="Date of birth"
+                android:text="@string/ed_date_of_birth"
                 android:textColor="@color/p_ed_blue_text"
                 android:textSize="15sp" />
 
@@ -164,7 +164,7 @@
                     android:ems="10"
                     android:inputType="text"
                     android:backgroundTint="@color/p_ed_background"
-                    android:text="Date of birth"
+                    android:text="@string/ed_date_of_birth"
                     android:clickable="false"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
@@ -188,7 +188,7 @@
                 android:layout_marginTop="1dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Delete date of birth"
+                android:text="@string/ed_delete_date_of_birth"
                 android:background="@color/p_ed_layout_background"
                 android:textColor="@color/p_ed_red_text"
                 android:textSize="20sp" />

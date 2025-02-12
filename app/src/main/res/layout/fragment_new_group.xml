@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginEnd="5dp"
-                    android:hint="Name of group"
+                    android:hint="@string/new_gr_name_of_group"
                     android:textColor="@color/white"
                     android:textColorHint="@color/add_new_grope_text_gray"
                     android:textSize="25sp" />
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:hint="Whose do you want to find?"
+            android:hint="@string/new_gr_whose_do_you"
             android:textColor="@color/white"
             android:textColorHint="@color/new_grope_text_gray"
             android:textSize="25sp"

@@ -39,7 +39,7 @@
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="Message"
+            android:hint="@string/chat_message"
             android:inputType="text"
             android:textColor="@color/white"
             android:textColorHint="@color/new_grope_text_gray"

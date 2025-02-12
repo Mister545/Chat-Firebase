@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="toolbar_name">Назад</string>
+    <string name="back_button_desc">назад</string>
+    <string name="edit_button_desc">Редагувати</string>
+    <string name="settings_button_desc">Налаштування</string>
+    <string name="Online">Онлайн</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="menu_chat">Чати</string>
+    <string name="menu_profile">Профіль</string>
+    <string name="menu_new_groups">Групи</string>
+    <string name="menu_saved">Збережене</string>
+    <string name="menu_setting">Налаштування</string>
+    <string name="next">Далі</string>
+    <string name="add_new_grope_edit_t">Напиши назву для групи</string>
+    <string name="ed_your_name">Твоє ім\'я</string>
+    <string name="ed_second_name">Прізвище</string>
+    <string name="ed_about_you">Про себе</string>
+    <string name="ed_type_something">Напиши щось про себе</string>
+    <string name="ed_date_of_birth">Дата народження</string>
+    <string name="ed_delete_date_of_birth">Видалити дату народження</string>
+    <string name="sign_registration">Реєстрація</string>
+    <string name="sign_name">Ім\'я</string>
+    <string name="sign_password">Пароль</string>
+    <string name="sign_register">Зареєструватися</string>
+    <string name="sign_auth">Автентифікуватися</string>
+    <string name="chat_message">Повідомлення</string>
+    <string name="new_gr_name_of_group">Назва групи</string>
+    <string name="new_gr_whose_do_you">Кого бажаєш знайти?</string>
+    <string name="profile_online">Онлайн</string>
+    <string name="profile_data">Данні</string>
+    <string name="profile_about_yourself">Про себе</string>
+    <string name="profile_name_of_user">Ім\'я користувача</string>
+    <string name="profile_born">Народився</string>
+    <string name="settings_online">Онлайн</string>
+    <string name="settings_settings">Налаштування</string>
+    <string name="settings_language">Мова</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_account">Акаунт</string>
+    <string name="settings_exit">Вихід</string>
+    <string name="settings_">Онлайн</string>
+    <string name="header_chat_users">Користувачі:</string>
+    <string name="data_picker_date_of_birth">Дата народження</string>
+    <string name="data_picker_save">Зберегти</string>
+    <string name="ed_name">Ім\'я</string>
+</resources>

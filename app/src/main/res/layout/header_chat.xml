@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginStart="20dp"
-                android:text="Users:"
+                android:text="@string/header_chat_users"
                 android:textColor="@android:color/white"
                 android:textSize="20sp" />
 

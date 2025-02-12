@@ -165,7 +165,7 @@ class ChatActivity : AppCompatActivity() {
 
     private fun changeNameOfGrope() {
         findViewById<ImageView>(R.id.editNameHeader).setOnClickListener {
-            DialogHelper().showInputDialog(this) {
+            DialogHelper.showInputDialog(this) {
                 viewModel.changeNameOfGrope(selectedChatId!!, it)
             }
         }

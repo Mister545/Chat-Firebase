@@ -68,7 +68,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="Online"
+                            android:text="@string/settings_online"
                             android:textColor="@color/p_gray_text" />
                     </LinearLayout>
                 </LinearLayout>
@@ -82,17 +82,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/settings_layout_background"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:background="@color/settings_layout_background">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/textView3"
@@ -100,7 +100,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_margin="10dp"
-                            android:text="Settings"
+                            android:text="@string/settings_settings"
                             android:textColor="@color/settings_text_blue"
                             android:textSize="20sp" />
 
@@ -110,17 +110,17 @@
                         android:id="@+id/language"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:clickable="true"
                         android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp">
+                        android:layout_marginBottom="15dp"
+                        android:clickable="true"
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:id="@+id/imageView4"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:layout_margin="6dp"
                             android:layout_gravity="center"
+                            android:layout_margin="6dp"
                             android:src="@drawable/language_24px" />
 
                         <TextView
@@ -128,7 +128,7 @@
                             android:layout_width="150dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="Language"
+                            android:text="@string/settings_language"
                             android:textColor="@color/settings_text_blue"
                             android:textSize="20sp" />
 
@@ -144,75 +144,79 @@
                             android:textSize="20sp" />
                     </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp">
-
-                    <ImageView
-                        android:id="@+id/imTheme"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="6dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/dark_mode_24px" />
-
-                    <TextView
-                        android:id="@+id/textView6"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Theme"
-                        android:textColor="@color/settings_text_blue"
-                        android:textSize="20sp" />
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchTheme"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginEnd="10dp"
-                        android:textColor="@color/settings_text_blue"
-                        android:textSize="20sp" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp">
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/imAccount"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="6dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/account_circle_24px" />
+                        <ImageView
+                            android:id="@+id/imTheme"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="6dp"
+                            android:src="@drawable/dark_mode_24px" />
 
-                    <TextView
-                        android:id="@+id/textView8"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Account"
-                        android:textColor="@color/settings_text_blue"
-                        android:textSize="20sp" />
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/settings_theme"
+                            android:textColor="@color/settings_text_blue"
+                            android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/accountExit"
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchTheme"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/settings_text_blue"
+                            android:textSize="20sp"
+                            app:trackTint="@color/switch_track"
+                            app:thumbTint="@color/switch_thumb" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="end"
-                        android:layout_marginEnd="10dp"
-                        android:text="Exit"
-                        android:paddingEnd="10dp"
-                        android:textColor="@color/settings_text_red"
-                        android:textSize="20sp" />
-                </LinearLayout>
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/imAccount"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="6dp"
+                            android:src="@drawable/account_circle_24px" />
+
+                        <TextView
+                            android:id="@+id/textView8"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/settings_account"
+                            android:textColor="@color/settings_text_blue"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/accountExit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="10dp"
+                            android:gravity="end"
+                            android:paddingEnd="10dp"
+                            android:text="@string/settings_exit"
+                            android:textColor="@color/settings_text_red"
+                            android:textSize="20sp" />
+                    </LinearLayout>
 
                 </LinearLayout>
 

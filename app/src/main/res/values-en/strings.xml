@@ -1,70 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">ChatFirebase</string>
     <string name="toolbar_name">Back</string>
     <string name="back_button_desc">back</string>
     <string name="edit_button_desc">Edit</string>
     <string name="settings_button_desc">Settings</string>
     <string name="Online">Online</string>
-
-    <string name="version_app" translatable="false">V0.1</string>
-    <string name="title_activity_scroll2" translatable="false">ScrollActivity2</string>
-    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
-    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
-    <string name="nav_header_title" translatable="false">Chat firebase</string>
-    <string name="nav_header_subtitle" translatable="false">chat.firebase@android.com</string>
-    <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_settings">Settings</string>
-
     <string name="menu_chat">Chats</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_new_groups">Groups</string>
     <string name="menu_saved">Saved</string>
     <string name="menu_setting">Setting</string>
-
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label" translatable="false">First Fragment</string>
-    <string name="second_fragment_label" translatable="false">Second Fragment</string>
     <string name="next">Next</string>
-    <string name="previous" translatable="false">Previous</string>
-
-    <!-- Strings used for fragments for navigation -->
     <string name="add_new_grope_edit_t">Write name of new grope</string>
-    <string name="title_activity_chat2" translatable="false">ChatActivity2</string>
-
-    <string name="menu_home" translatable="false">Home</string>
-    <string name="menu_gallery" translatable="false">Gallery</string>
-    <string name="menu_slideshow" translatable="false">Slideshow</string>
-
-    <!-- Strings edit profile fragment -->
     <string name="ed_your_name">Your name</string>
     <string name="ed_second_name">Second Name</string>
     <string name="ed_about_you">About you</string>
-    <string name="ed_type_something">Type something about you…</string>
+    <string name="ed_type_something">About you</string>
     <string name="ed_date_of_birth">Date of birth</string>
     <string name="ed_delete_date_of_birth">Delete date of birth</string>
-
-    <!-- Strings sign in fragment -->
     <string name="sign_registration">Registration</string>
     <string name="sign_name">Name</string>
-    <string name="sign_gmail" translatable="false">Gmail</string>
     <string name="sign_password">Password</string>
     <string name="sign_register">Register</string>
     <string name="sign_auth">Authentication</string>
-
     <string name="chat_message">Message</string>
-
-    <!-- Strings new group -->
     <string name="new_gr_name_of_group">Name of group</string>
     <string name="new_gr_whose_do_you">Whose do you want to find?</string>
-
-    <!-- Strings profile  -->
     <string name="profile_online">Online</string>
     <string name="profile_data">Data</string>
     <string name="profile_about_yourself">About yourself</string>
     <string name="profile_name_of_user">Name of user</string>
-    <string name="profile_born">Born</string>
-
-    <!-- Strings settings  -->
+    <string name="profile_born">Name of user</string>
     <string name="settings_online">Online</string>
     <string name="settings_settings">Settings</string>
     <string name="settings_language">Language</string>
@@ -72,14 +39,8 @@
     <string name="settings_account">Account</string>
     <string name="settings_exit">Exit</string>
     <string name="settings_">Online</string>
-
-    <!-- Strings header chat  -->
     <string name="header_chat_users">Users</string>
-
-    <!-- Strings header chat  -->
     <string name="data_picker_date_of_birth">Date of birth</string>
     <string name="data_picker_save">Save</string>
-    <string name="ed_name">Name</string>
-
-
+    <string name="ed_name">Save</string>
 </resources>

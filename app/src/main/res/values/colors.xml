@@ -1,52 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color> <!-- Темно-синій замість чорного -->
+    <color name="white">#ffffff</color> <!-- Світло-блакитний замість білого -->
+    <color name="text_color">#000000</color>
 
-        <!--    Act profile   -->
-    <color name="p_toolbar_nickname">#212D3B</color>
-    <color name="p_background">#151E25</color>
-    <color name="p_layout_background">#1D2733</color>
-    <color name="p_gray_text">#717B87</color>
-    <color name="p_button_photo">#61A9E0</color>
-    <color name="p_blue_text">#85B9E4</color>
+    <!--    Switch   -->
+    <color name="track_enabled">#4A90E2</color> <!-- Блакитний (увімкнено) -->
+    <color name="track_disabled">#AAB7C4</color> <!-- Світло-сірий (вимкнено) -->
+    <color name="thumb_enabled">#E3F2FD</color> <!-- Світло-блакитний кружок -->
+    <color name="thumb_disabled">#546E7A</color> <!-- Темний сірий-блакитний кружок -->
 
-        <!--    Act edit profile   -->
-    <color name="p_ed_toolbar">#252D3A</color>
-    <color name="p_ed_background">#151E25</color>
-    <color name="p_ed_layout_background">#1D2733</color>
-    <color name="p_ed_gray_text">#717B87</color>
-    <color name="p_ed_blue_text">#85B9E4</color>
-    <color name="p_ed_red_text">#C16C74</color>
+    <!--    Act profile   -->
+    <color name="p_toolbar_nickname">#3D5A80</color>
+    <color name="p_background">#ffffff</color>
+    <color name="p_layout_background">#ffffff</color>
+    <color name="p_gray_text">#98AFC7</color> <!-- Світліший сірий-блакитний -->
+    <color name="p_button_photo">#48CAE4</color> <!-- Яскравий блакитний -->
+    <color name="p_blue_text">#64CFF6</color> <!-- Бірюзовий -->
+
+    <!--    Act edit profile   -->
+    <color name="p_ed_toolbar">#355070</color>
+    <color name="p_ed_background">#ffffff</color>
+    <color name="p_ed_layout_background">#ffffff</color>
+    <color name="p_ed_gray_text">#98AFC7</color>
+    <color name="p_ed_blue_text">#64CFF6</color>
+    <color name="p_ed_red_text">#FF6B6B</color> <!-- Яскравий кораловий -->
 
     <!--    Driver layout  -->
-    <color name="nav_header_background">#233040</color>
-    <color name="drawer_background">#1C242F</color>
+    <color name="nav_header_background">#1F4068</color>
+    <color name="drawer_background">#ffffff</color>
 
     <!--    date picker   -->
-    <color name="date_picker_button">#61A9E0</color>
-    <color name="date_picker_layout_background">#212D3B</color>
+    <color name="date_picker_button">#48CAE4</color>
+    <color name="date_picker_layout_background">#2E3A59</color>
 
     <!--    scroll act   -->
-    <color name="scroll_toolbar">#252D3A</color>
-    <color name="scroll_fab">#60A2DE</color>
+    <color name="scroll_toolbar">#355070</color>
+    <color name="scroll_fab">#4A90E2</color> <!-- Насичений блакитний -->
 
     <!--    settings act   -->
-    <color name="settings_text_blue">#85B9E4</color>
-    <color name="settings_text_red">#C16C74</color>
-    <color name="settings_nickname">#212D3B</color>
-    <color name="settings_background">#151E25</color>
-    <color name="settings_layout_background">#1D2733</color>
+    <color name="settings_text_blue">#64CFF6</color>
+    <color name="settings_text_red">#FF6B6B</color>
+    <color name="settings_nickname">#3D5A80</color>
+    <color name="settings_background">#ffffff</color>
+    <color name="settings_layout_background">#ffffff</color>
 
-    <!--    new grope act   -->
-    <color name="new_grope_background">#1D2733</color>
-    <color name="new_grope_item_background">#C16C74</color>
-    <color name="new_grope_text_gray">#717B87</color>
+    <!--    new group act   -->
+    <color name="new_grope_background">#ffffff</color>
+    <color name="new_grope_item_background">#FF6B6B</color> <!-- Червоний акцент -->
+    <color name="new_grope_text_gray">#98AFC7</color>
 
-    <!--   add new grope act   -->
-    <color name="add_new_grope_background">#1D2733</color>
-    <color name="add_new_grope_item_background">#C16C74</color>
-    <color name="add_new_grope_text_gray">#717B87</color>
-
-
+    <!--   add new group act   -->
+    <color name="add_new_grope_background">#ffffff</color>
+    <color name="add_new_grope_item_background">#48CAE4</color> <!-- Блакитний акцент -->
+    <color name="add_new_grope_text_gray">#98AFC7</color>
 </resources>

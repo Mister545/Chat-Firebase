@@ -72,7 +72,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="Online"
+                        android:text="@string/profile_online"
                         android:textColor="@color/p_gray_text" />
                 </LinearLayout>
             </LinearLayout>
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:paddingStart="15dp"
-            android:text="Data"
+            android:text="@string/profile_data"
             android:textColor="@color/p_blue_text"
             android:textSize="20sp" />
 
@@ -132,7 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="15dp"
-            android:text="About yourself"
+            android:text="@string/profile_about_yourself"
             android:textColor="@color/p_gray_text" />
 
         <TextView
@@ -151,7 +151,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="15dp"
-            android:text="Name of user"
+            android:text="@string/profile_name_of_user"
             android:textColor="@color/p_gray_text" />
 
         <TextView
@@ -170,7 +170,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="15dp"
-            android:text="Born"
+            android:text="@string/profile_born"
             android:textColor="@color/p_gray_text" />
 
     </LinearLayout>

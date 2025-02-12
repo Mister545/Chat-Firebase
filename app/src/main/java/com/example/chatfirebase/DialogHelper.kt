@@ -1,12 +1,14 @@
 package com.example.chatfirebase
 
+import android.app.Activity
 import android.content.Context
 import android.health.connect.datatypes.units.Length
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat.recreate
 
-class DialogHelper {
+object DialogHelper {
 
     fun showInputDialog(context: Context, onTextEntered: (String) -> Unit) {
         val editText = EditText(context)
@@ -29,6 +31,20 @@ class DialogHelper {
             .create()
 
         dialog.show()
+    }
+
+    fun showLanguageDialog(activity: Activity) {
+        val languages = arrayOf("English", "Українська")
+        val languageCodes = arrayOf("en", "uk")
+
+        AlertDialog.Builder(activity)
+            .setTitle("Select Language")
+            .setSingleChoiceItems(languages, -1) { dialog, which ->
+                LocaleHelper.setLocale(activity, languageCodes[which])
+                activity.recreate()
+                dialog.dismiss()
+            }
+            .show()
     }
 
     fun showInputDialog(context: Context, text: String, onTextEntered: (String) -> Unit) {
