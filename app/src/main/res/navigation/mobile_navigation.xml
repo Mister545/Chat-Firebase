@@ -7,31 +7,31 @@
 
     <fragment
         android:id="@+id/nav_chat"
-        android:name="com.example.chatfirebase.ui.chats.ChatsFragment"
+        android:name="com.example.chatfirebase.view.ChatsFragment"
         android:label="@string/menu_chat"
         tools:layout="@layout/fragment_chats" >
     </fragment>
 
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.chatfirebase.ui.profile.ProfileFragment"
+        android:name="com.example.chatfirebase.view.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/nav_new_group"
-        android:name="com.example.chatfirebase.ui.newGroup.NewGroupFragment"
+        android:name="com.example.chatfirebase.view.NewGroupFragment"
         android:label="@string/menu_new_groups"
         tools:layout="@layout/fragment_new_group" />
 
     <fragment
         android:id="@+id/nav_saved"
-        android:name="com.example.chatfirebase.ui.saved.SavedFragment"
+        android:name="com.example.chatfirebase.view.SavedFragment"
         android:label="@string/menu_saved"
         tools:layout="@layout/fragment_saved" />
     <fragment
         android:id="@+id/nav_settings"
-        android:name="com.example.chatfirebase.ui.settings.SettingsFragment"
+        android:name="com.example.chatfirebase.view.SettingsFragment"
         android:label="@string/menu_setting"
         tools:layout="@layout/fragment_settings" />
 </navigation>

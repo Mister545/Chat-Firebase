@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/new_grope_background"
-    tools:context=".ui.newGroup.NewGroupFragment">
+    tools:context=".view.NewGroupFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

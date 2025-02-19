@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ScrollActivity2">
+    tools:context=".view.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -15,7 +15,17 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/p_toolbar_nickname" />
+            android:background="@color/p_toolbar_nickname" >
+
+            <ImageView
+                android:id="@+id/updateChats"
+                android:src="@drawable/restart_alt_24px"
+                android:layout_height="match_parent"
+                android:layout_width="40dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="10dp"
+                tools:ignore="ContentDescription" />
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -13,30 +13,31 @@
         android:theme="@style/Theme.ChatFirebase"
         tools:targetApi="31">
         <activity
-            android:name=".ui.chat.ChatActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_chat2"
-            android:theme="@style/Theme.ChatFirebase.NoActionBar" />
+            android:name="com.example.chatfirebase.view.MainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_scroll2"
+            android:theme="@style/Theme.ChatFirebase.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".ui.searchNewChat.SearchNewChatActivity"
+            android:name="com.example.chatfirebase.view.SearchNewChatActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.chat.ChatActivity"
+            android:name="com.example.chatfirebase.view.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.addNewGrope.AddNewGrope"
+            android:name="com.example.chatfirebase.view.AddNewGrope"
             android:exported="false"
             android:theme="@style/Theme.ChatFirebase" />
         <activity
-            android:name=".ScrollActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_scroll2"
-            android:theme="@style/Theme.ChatFirebase.NoActionBar" />
-        <activity
-            android:name=".ui.editProfile.EditProfile"
+            android:name="com.example.chatfirebase.view.EditProfile"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name="com.example.chatfirebase.view.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,22 +45,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.registration.SignInAct" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.profile.ProfileFragment"
-            android:exported="false" />
-        <activity
-            android:name=".ScrollActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name="com.example.chatfirebase.view.SignInAct" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<!--        <activity-->
+<!--            android:name=".view.ProfileFragment"-->
+<!--            android:exported="false"-->
+<!--            tools:ignore="Instantiatable" />-->
     </application>
 
 </manifest>

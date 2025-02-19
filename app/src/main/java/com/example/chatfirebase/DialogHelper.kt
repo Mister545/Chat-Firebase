@@ -34,8 +34,8 @@ object DialogHelper {
     }
 
     fun showLanguageDialog(activity: Activity) {
-        val languages = arrayOf("English", "Українська")
-        val languageCodes = arrayOf("en", "uk")
+        val languages = arrayOf("English", "Українська", "Spanish")
+        val languageCodes = arrayOf("en", "uk", "es")
 
         AlertDialog.Builder(activity)
             .setTitle("Select Language")

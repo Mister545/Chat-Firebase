@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/p_ed_background"
-    tools:context=".ui.editProfile.EditProfile">
+    tools:context=".view.EditProfile">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarEditProfile"
